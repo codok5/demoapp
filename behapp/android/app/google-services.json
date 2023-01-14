@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "163847924885",
+    "project_id": "behapp-project",
+    "storage_bucket": "behapp-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163847924885:android:45e8e319ce2f7759257f9c",
+        "android_client_info": {
+          "package_name": "com.example.behapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "163847924885-7hb9l10veeq257005a1hm2rsoefjr9c5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCebEHfKtqFgZGL7N5x-IWMI_p5xsBEmc0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "163847924885-7hb9l10veeq257005a1hm2rsoefjr9c5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
