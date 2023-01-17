@@ -20,10 +20,19 @@ class _DiaryPageState extends State<DiaryPage> {
     final date =
         format.format(ModalRoute.of(context)?.settings.arguments as DateTime);
     final diarydata = context.watch<EmotionDiaryState>().diarydata;
-
+    final String emotion = diarydata[date]?[3] == Emotion.happpy
+        ? 'happy'
+        : diarydata[date]?[3] == Emotion.good
+            ? 'good'
+            : diarydata[date]?[3] == Emotion.sad
+                ? 'sad'
+                : diarydata[date]?[3] == Emotion.tired
+                    ? 'tired'
+                    : diarydata[date]?[3] == Emotion.angry
+                        ? 'angry'
+                        : '';
     return Builder(builder: (BuildContext context) {
       return Container(
-        
         decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('assets/images/paper.jpg'), fit: BoxFit.cover),
@@ -35,7 +44,9 @@ class _DiaryPageState extends State<DiaryPage> {
               backgroundColor: const Color.fromARGB(255, 225, 236, 186),
             ),
             onPressed: () {
-              Navigator.pushNamed(context, DiaryWritePage.routeName);
+              Navigator.pushNamed(context, DiaryWritePage.routeName,
+                  arguments:
+                      ModalRoute.of(context)?.settings.arguments as DateTime);
             },
             child: const Text(
               '새로운 일기 작성하기',
@@ -56,18 +67,44 @@ class _DiaryPageState extends State<DiaryPage> {
                   const SizedBox(
                     height: 70,
                   ),
-                  Text(
-                    date,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        date,
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Container(
+                        height: 35,
+                        width: 35,
+                        child: emotion != ''
+                            ? Image.asset('assets/images/$emotion.png')
+                            : Text(''),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 30,
                   ),
                   Text(
                     diarydata[date]?[0] ?? '새로운 일기를 써보세요',
+                    style: TextStyle(
+                      fontSize: 30,
+                    ),
+                  ),
+                  Text(
+                    diarydata[date]?[1] ?? '',
+                    style: TextStyle(
+                      fontSize: 30,
+                    ),
+                  ),
+                  Text(
+                    diarydata[date]?[2] ?? '',
                     style: TextStyle(
                       fontSize: 30,
                     ),

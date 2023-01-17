@@ -1,4 +1,5 @@
 import 'package:behapp/pages/diary_page.dart';
+import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,14 +35,16 @@ class _HomePageState extends State<HomePage> {
               label: 'Diary',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.timer),
-              label: 'Action',
+              icon: Icon(Icons.align_vertical_bottom_outlined),
+              label: 'Goal',
             ),
           ],
           onTap: (value) {
             if (value == 1) {
               Navigator.pushNamed(context, DiaryPage.routeName,
-                  arguments: DateTime.now());
+                  arguments: _selectedDay);
+            } else if (value == 2) {
+              Navigator.pushNamed(context, GoalsPage.routeName);
             }
           },
         ),
@@ -83,7 +86,6 @@ class _HomePageState extends State<HomePage> {
             GoalWidget(
               selectedDay: selectedDate,
             ),
-            
           ],
         ),
       );
@@ -100,15 +102,35 @@ class GoalWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String goal = context.watch<EmotionDiaryState>().diarydata[selectedDay]?[0]?? '새로운 목표를 설정하세요';
-    return Container(
-      margin: const EdgeInsets.all(5),
-      height: 100,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1),
-          border: Border.all(color: Colors.blueGrey)),
-      child: Text(goal),
+    String goal = context.watch<EmotionDiaryState>().diarydata[selectedDay]
+            ?[0] ??
+        '새로운 목표를 설정해 보세요';
+    return Column(
+      children: [
+        Text('오늘의 목표'),
+        Container(
+          margin: const EdgeInsets.all(5),
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.blueGrey,
+              )),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  goal,
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -123,16 +145,50 @@ class DiaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String diary = context.watch<EmotionDiaryState>().diarydata[selectedDay]?[0]?? '새로운 일기를 써보세요';
+    String doc1 = context.watch<EmotionDiaryState>().diarydata[selectedDay]
+            ?[0] ??
+        '새로운 일기를 써보세요';
+    String doc2 =
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?[1] ?? '';
+    String doc3 =
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?[2] ?? '';
     return Builder(builder: (BuildContext context) {
-      return Container(
-        margin: const EdgeInsets.all(5),
-        height: 100,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(1),
-            border: Border.all(color: Colors.blueGrey)),
-        child: Text(diary),
+      return Column(
+        children: [
+          Text('오늘의 일기'),
+          Container(
+            margin: const EdgeInsets.all(5),
+            height: 100,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blueGrey)),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    doc1,
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    doc2,
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    doc3,
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       );
     });
   }

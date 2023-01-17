@@ -1,6 +1,13 @@
 part of 'emotion_diary_provider.dart';
 
-enum Emotion { happpy, good, sad, tired, angry }
+enum Emotion {
+  initial,
+  happpy,
+  good,
+  sad,
+  tired,
+  angry,
+}
 
 class EmotionDiaryState extends Equatable {
   final Map<String, List<dynamic>> diarydata;

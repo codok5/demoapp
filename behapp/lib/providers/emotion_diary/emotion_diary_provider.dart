@@ -7,12 +7,12 @@ class EmotionDiaryProvider extends StateNotifier<EmotionDiaryState>
     with LocatorMixin {
   EmotionDiaryProvider() : super(EmotionDiaryState.initial());
 
-  void writeDiary(String date, String doc) {
+  void writeDiary(String date, String doc1,String doc2, String doc3, Emotion emotion) {
     Map<String, List<dynamic>> ndiarydata = state.diarydata;
     ndiarydata = {
       ...state.diarydata,
       date: [
-        doc,
+        doc1,doc2,doc3,emotion
       ]
     };
     state = state.copyWith(diarydata: ndiarydata);
