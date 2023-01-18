@@ -1,23 +1,18 @@
 part of 'emotion_diary_provider.dart';
 
-enum Emotion {
-  initial,
-  happpy,
-  good,
-  sad,
-  tired,
-  angry,
-}
+Box<EmotionDiaryObject> diarydb = Hive.box('emotiondiary');
+final key = diarydb.keys;
+final diary = diarydb.values;
 
 class EmotionDiaryState extends Equatable {
-  final Map<String, List<dynamic>> diarydata;
+  final Map<dynamic, EmotionDiaryObject> diarydata;
 
   EmotionDiaryState({
     required this.diarydata,
   });
 
   factory EmotionDiaryState.initial() {
-    return EmotionDiaryState(diarydata: const {});
+    return EmotionDiaryState(diarydata: Map.fromIterables(key, diary));
   }
 
   @override
@@ -26,8 +21,10 @@ class EmotionDiaryState extends Equatable {
   @override
   String toString() => 'EmotionDiaryState(diarydata: $diarydata)';
 
+  
+
   EmotionDiaryState copyWith({
-    Map<String, List<dynamic>>? diarydata,
+    Map<dynamic, EmotionDiaryObject>? diarydata,
   }) {
     return EmotionDiaryState(
       diarydata: diarydata ?? this.diarydata,

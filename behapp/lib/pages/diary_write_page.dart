@@ -1,7 +1,8 @@
+import 'package:behapp/hivecustomobject/emotion_diary.dart';
+import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:behapp/utils/formatter.dart';
 import 'package:provider/provider.dart';
 
 class DiaryWritePage extends StatefulWidget {
@@ -23,35 +24,28 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
   @override
   void initState() {
     _scrollController = ScrollController();
-    _textEditingController1.text = context
-            .read<EmotionDiaryState>()
-            .diarydata[format.format(DateTime.now())]?[0] ??
-        '';
-    _textEditingController2.text = context
-            .read<EmotionDiaryState>()
-            .diarydata[format.format(DateTime.now())]?[1] ??
-        '';
-    _textEditingController3.text = context
-            .read<EmotionDiaryState>()
-            .diarydata[format.format(DateTime.now())]?[2] ??
-        '';
-    selectedEmotion = context
-            .read<EmotionDiaryState>()
-            .diarydata[format.format(DateTime.now())]?[3] ??
-        Emotion.happpy;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arg = ModalRoute.of(context)?.settings.arguments as Writeargument;
+      _textEditingController1.text = arg.doc1 ?? '';
+      _textEditingController2.text = arg.doc2 ?? '';
+      _textEditingController3.text = arg.doc3 ?? '';
+      selectedEmotion = arg.emotion ?? Emotion.initial;
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _textEditingController1.dispose();
+    _textEditingController2.dispose();
+    _textEditingController3.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final DateTime date =
-        ModalRoute.of(context)?.settings.arguments as DateTime;
+    final arg = ModalRoute.of(context)?.settings.arguments as Writeargument;
     return Material(
       child: GestureDetector(
         onTap: () {
@@ -67,9 +61,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                format.format(
-                  date,
-                ),
+                arg.date,
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -113,7 +105,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                                     child: IconButton(
                                         onPressed: () {
                                           setState(() {
-                                            selectedEmotion = Emotion.happpy;
+                                            selectedEmotion = Emotion.happy;
                                           });
                                         },
                                         icon: Image.asset(
@@ -122,7 +114,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                                       borderRadius: BorderRadius.circular(30),
                                       border: Border.all(
                                         width: 3,
-                                        color: selectedEmotion == Emotion.happpy
+                                        color: selectedEmotion == Emotion.happy
                                             ? Colors.red
                                             : Colors.black,
                                       ),
@@ -153,6 +145,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                                           setState(() {
                                             selectedEmotion = Emotion.tired;
                                           });
+                                          print(selectedEmotion);
                                         },
                                         icon: Image.asset(
                                             'assets/images/tired.png')),
@@ -227,7 +220,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                                   context
                                       .read<EmotionDiaryProvider>()
                                       .writeDiary(
-                                          format.format(date),
+                                          arg.date,
                                           _textEditingController1.text,
                                           _textEditingController2.text,
                                           _textEditingController3.text,

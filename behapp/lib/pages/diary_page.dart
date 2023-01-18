@@ -1,7 +1,9 @@
-import 'package:behapp/pages/diary_write_page.dart';
-import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:behapp/hivecustomobject/emotion_diary.dart';
+import 'package:behapp/pages/diary_write_page.dart';
+import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 
 import '../utils/formatter.dart';
 
@@ -12,25 +14,46 @@ class DiaryPage extends StatefulWidget {
   State<DiaryPage> createState() => _DiaryPageState();
 }
 
+class Writeargument {
+  final String date;
+  final String? doc1;
+  final String? doc2;
+  final String? doc3;
+  final Emotion? emotion;
+  Writeargument({
+    required this.date,
+    required this.doc1,
+    required this.doc2,
+    required this.doc3,
+    required this.emotion,
+  });
+}
+
 class _DiaryPageState extends State<DiaryPage> {
   TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final date =
+    final String date =
         format.format(ModalRoute.of(context)?.settings.arguments as DateTime);
     final diarydata = context.watch<EmotionDiaryState>().diarydata;
-    final String emotion = diarydata[date]?[3] == Emotion.happpy
+    final String? doc1 = diarydata[date]?.docfirst;
+    final String? doc2 = diarydata[date]?.docsecond;
+    final String? doc3 = diarydata[date]?.docthird;
+    final Emotion? emoji = diarydata[date]?.emotion;
+
+    final String emotion = diarydata[date]?.emotion == Emotion.happy
         ? 'happy'
-        : diarydata[date]?[3] == Emotion.good
+        : diarydata[date]?.emotion == Emotion.good
             ? 'good'
-            : diarydata[date]?[3] == Emotion.sad
+            : diarydata[date]?.emotion == Emotion.sad
                 ? 'sad'
-                : diarydata[date]?[3] == Emotion.tired
+                : diarydata[date]?.emotion == Emotion.tired
                     ? 'tired'
-                    : diarydata[date]?[3] == Emotion.angry
+                    : diarydata[date]?.emotion == Emotion.angry
                         ? 'angry'
                         : '';
+
     return Builder(builder: (BuildContext context) {
       return Container(
         decoration: const BoxDecoration(
@@ -45,8 +68,12 @@ class _DiaryPageState extends State<DiaryPage> {
             ),
             onPressed: () {
               Navigator.pushNamed(context, DiaryWritePage.routeName,
-                  arguments:
-                      ModalRoute.of(context)?.settings.arguments as DateTime);
+                  arguments: Writeargument(
+                      date: date,
+                      doc1: doc1,
+                      doc2: doc2,
+                      doc3: doc3,
+                      emotion: emoji));
             },
             child: const Text(
               '새로운 일기 작성하기',
@@ -92,19 +119,19 @@ class _DiaryPageState extends State<DiaryPage> {
                     height: 30,
                   ),
                   Text(
-                    diarydata[date]?[0] ?? '새로운 일기를 써보세요',
+                    doc1 ?? '새로운 일기를 써보세요',
                     style: TextStyle(
                       fontSize: 30,
                     ),
                   ),
                   Text(
-                    diarydata[date]?[1] ?? '',
+                    doc2 ?? '',
                     style: TextStyle(
                       fontSize: 30,
                     ),
                   ),
                   Text(
-                    diarydata[date]?[2] ?? '',
+                    doc3 ?? '',
                     style: TextStyle(
                       fontSize: 30,
                     ),

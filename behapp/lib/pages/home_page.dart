@@ -112,9 +112,9 @@ class GoalWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String goal = context.watch<EmotionDiaryState>().diarydata[selectedDay]
-            ?[0] ??
-        '새로운 목표를 설정해 보세요';
+    String goal =
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docfirst ??
+            'aaa';
     return Column(
       children: [
         Text('오늘의 목표'),
@@ -155,13 +155,12 @@ class DiaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String doc1 = context.watch<EmotionDiaryState>().diarydata[selectedDay]
-            ?[0] ??
+    String doc1 = context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docfirst??
         '새로운 일기를 써보세요';
     String doc2 =
-        context.watch<EmotionDiaryState>().diarydata[selectedDay]?[1] ?? '';
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docsecond ?? '';
     String doc3 =
-        context.watch<EmotionDiaryState>().diarydata[selectedDay]?[2] ?? '';
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docthird ?? '';
     return Builder(builder: (BuildContext context) {
       return Column(
         children: [

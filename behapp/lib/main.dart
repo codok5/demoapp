@@ -1,4 +1,6 @@
 import 'package:behapp/firebase_options.dart';
+import 'package:behapp/hivecustomobject/emotion_diary.dart';
+import 'package:behapp/hivecustomobject/goal.dart';
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/diary_write_page.dart';
 import 'package:behapp/pages/goals_page.dart';
@@ -13,11 +15,15 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  await Hive.openBox('emotiondiary');
-  await Hive.openBox('goal');
-  await initializeDateFormatting();
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(EmotionDiaryObjectAdapter());
+  Hive.registerAdapter(EmotionAdapter());
+  Hive.registerAdapter(GoalObjectAdapter());
+  Hive.registerAdapter(GoalTypeAdapter());
+  await Hive.openBox<EmotionDiaryObject>('emotiondiary');
+  await Hive.openBox<GoalObject>('goal');
+  await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
