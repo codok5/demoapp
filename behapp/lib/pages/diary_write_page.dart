@@ -62,7 +62,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 80,
+              height: MediaQuery.of(context).size.height / 11,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -281,8 +281,8 @@ class textform3 extends StatelessWidget {
         textInputAction: TextInputAction.done,
         onTap: () {
           _scrollController.animateTo(
-            230,
-            duration: Duration(milliseconds: 300),
+            250,
+            duration: Duration(milliseconds: 600),
             curve: Curves.ease,
           );
         },
@@ -338,7 +338,7 @@ class textform2 extends StatelessWidget {
         onTap: () {
           _scrollController.animateTo(
             170,
-            duration: Duration(milliseconds: 300),
+            duration: Duration(milliseconds: 600),
             curve: Curves.ease,
           );
         },

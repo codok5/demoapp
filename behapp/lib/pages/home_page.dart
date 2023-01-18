@@ -19,6 +19,12 @@ class _HomePageState extends State<HomePage> {
   DateTime? _selectedDay;
 
   @override
+  void initState() {
+    _selectedDay = DateTime.now();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     DateTime focusedDay = DateTime.now();
 
@@ -44,7 +50,11 @@ class _HomePageState extends State<HomePage> {
               Navigator.pushNamed(context, DiaryPage.routeName,
                   arguments: _selectedDay);
             } else if (value == 2) {
-              Navigator.pushNamed(context, GoalsPage.routeName);
+              Navigator.pushNamed(
+                context,
+                GoalsPage.routeName,
+                arguments: _selectedDay,
+              );
             }
           },
         ),

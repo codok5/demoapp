@@ -64,8 +64,8 @@ class _DiaryPageState extends State<DiaryPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 70,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 10,
                   ),
                   Row(
                     children: [

@@ -1,5 +1,5 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:behapp/pages/goals_write_page.dart';
+import 'package:flutter/material.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({super.key});
@@ -11,6 +11,27 @@ class GoalsPage extends StatefulWidget {
 class _GoalsPageState extends State<GoalsPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Material(
+      child: Scaffold(
+        floatingActionButton: ElevatedButton(
+          child: Text(
+            '목표 생성',
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, GoalsWritePage.routeName);
+          },
+        ),
+        body: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 10,
+            ),
+            Text(
+              'a',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
