@@ -1,3 +1,4 @@
+import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,17 +6,8 @@ import 'package:behapp/hivecustomobject/emotion_diary.dart';
 import 'package:behapp/pages/diary_write_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 
-import '../utils/formatter.dart';
-
-class DiaryPage extends StatefulWidget {
-  const DiaryPage({super.key});
-  static const routeName = '/diary';
-  @override
-  State<DiaryPage> createState() => _DiaryPageState();
-}
-
 class Writeargument {
-  final String date;
+  final DateTime date;
   final String? doc1;
   final String? doc2;
   final String? doc3;
@@ -29,6 +21,13 @@ class Writeargument {
   });
 }
 
+class DiaryPage extends StatefulWidget {
+  const DiaryPage({super.key});
+  static const routeName = '/diary';
+  @override
+  State<DiaryPage> createState() => _DiaryPageState();
+}
+
 class _DiaryPageState extends State<DiaryPage> {
   TextEditingController textEditingController = TextEditingController();
 
@@ -36,21 +35,25 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget build(BuildContext context) {
     final String date =
         format.format(ModalRoute.of(context)?.settings.arguments as DateTime);
+    final int dateint = formatdatetoint(formatint
+        .format(ModalRoute.of(context)?.settings.arguments as DateTime));
+    final String day =
+        formatw.format(ModalRoute.of(context)?.settings.arguments as DateTime);
     final diarydata = context.watch<EmotionDiaryState>().diarydata;
-    final String? doc1 = diarydata[date]?.docfirst;
-    final String? doc2 = diarydata[date]?.docsecond;
-    final String? doc3 = diarydata[date]?.docthird;
-    final Emotion? emoji = diarydata[date]?.emotion;
+    final String? doc1 = diarydata[dateint]?.docfirst;
+    final String? doc2 = diarydata[dateint]?.docsecond;
+    final String? doc3 = diarydata[dateint]?.docthird;
+    final Emotion? emoji = diarydata[dateint]?.emotion;
 
-    final String emotion = diarydata[date]?.emotion == Emotion.happy
+    final String emotion = diarydata[dateint]?.emotion == Emotion.happy
         ? 'happy'
-        : diarydata[date]?.emotion == Emotion.good
+        : diarydata[dateint]?.emotion == Emotion.good
             ? 'good'
-            : diarydata[date]?.emotion == Emotion.sad
+            : diarydata[dateint]?.emotion == Emotion.sad
                 ? 'sad'
-                : diarydata[date]?.emotion == Emotion.tired
+                : diarydata[dateint]?.emotion == Emotion.tired
                     ? 'tired'
-                    : diarydata[date]?.emotion == Emotion.angry
+                    : diarydata[dateint]?.emotion == Emotion.angry
                         ? 'angry'
                         : '';
 
@@ -67,16 +70,20 @@ class _DiaryPageState extends State<DiaryPage> {
               backgroundColor: const Color.fromARGB(255, 225, 236, 186),
             ),
             onPressed: () {
-              Navigator.pushNamed(context, DiaryWritePage.routeName,
-                  arguments: Writeargument(
-                      date: date,
-                      doc1: doc1,
-                      doc2: doc2,
-                      doc3: doc3,
-                      emotion: emoji));
+              Navigator.pushNamed(
+                context,
+                DiaryWritePage.routeName,
+                arguments: Writeargument(
+                    date:
+                        ModalRoute.of(context)?.settings.arguments as DateTime,
+                    doc1: doc1,
+                    doc2: doc2,
+                    doc3: doc3,
+                    emotion: emoji),
+              );
             },
-            child: const Text(
-              '새로운 일기 작성하기',
+            child: Text(
+              doc1 == null ? '새로운 일기 작성하기' : '일기 수정하기',
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -97,7 +104,7 @@ class _DiaryPageState extends State<DiaryPage> {
                   Row(
                     children: [
                       Text(
-                        date,
+                        '$date  ${day}',
                         style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,

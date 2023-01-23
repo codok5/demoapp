@@ -7,6 +7,7 @@ import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
+import 'package:behapp/providers/goal/goal_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
@@ -21,8 +22,10 @@ void main() async {
   Hive.registerAdapter(EmotionAdapter());
   Hive.registerAdapter(GoalObjectAdapter());
   Hive.registerAdapter(GoalTypeAdapter());
+  Hive.registerAdapter(todoObjectAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
+  await Hive.openBox<List<todoObject>>('todo');
   await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -40,6 +43,9 @@ class MyApp extends StatelessWidget {
       providers: [
         StateNotifierProvider<EmotionDiaryProvider, EmotionDiaryState>(
           create: (context) => EmotionDiaryProvider(),
+        ),
+        StateNotifierProvider<GoalProvider, GoalState>(
+          create: (context) => GoalProvider(),
         ),
       ],
       child: MaterialApp(

@@ -15,19 +15,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String selectedDate = format.format(DateTime.now());
-  DateTime? _selectedDay;
-
-  @override
-  void initState() {
-    _selectedDay = DateTime.now();
-    super.initState();
-  }
+  int selectedDateint = formatdatetoint(formatint.format(DateTime.now()));
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    DateTime focusedDay = DateTime.now();
-
     return Builder(builder: (BuildContext context) {
       return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
@@ -66,35 +59,41 @@ class _HomePageState extends State<HomePage> {
             Container(
               color: Colors.blueGrey.withOpacity(0.2),
               child: TableCalendar(
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      selectedDate = format.format(selectedDay);
-                      _selectedDay = selectedDay;
-                    });
-                  },
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  calendarFormat: CalendarFormat.month,
-                  locale: 'ko_KR',
-                  headerStyle: const HeaderStyle(
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    selectedDateint =
+                        formatdatetoint(formatint.format(selectedDay));
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                },
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                calendarFormat: CalendarFormat.month,
+                locale: 'ko_KR',
+                headerStyle: const HeaderStyle(
+                    titleCentered: true,
                     formatButtonVisible: false,
-                  ),
-                  calendarStyle: const CalendarStyle(
-                      outsideDaysVisible: false,
-                      weekendTextStyle: TextStyle(color: Colors.red)),
-                  focusedDay: focusedDay,
-                  firstDay: DateTime(
-                      focusedDay.year - 10, focusedDay.month, focusedDay.day),
-                  lastDay: DateTime(
-                      focusedDay.year + 10, focusedDay.month, focusedDay.day)),
+                    titleTextStyle: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    )),
+                calendarStyle: const CalendarStyle(
+                  outsideDaysVisible: false,
+                  weekendTextStyle: TextStyle(color: Colors.red),
+                ),
+                focusedDay: _focusedDay,
+                firstDay: DateTime(DateTime.now().year - 20),
+                lastDay: DateTime(DateTime.now().year + 30),
+              ),
             ),
             const SizedBox(
               height: 20,
             ),
             DiaryWidget(
-              selectedDay: selectedDate,
+              selectedDay: selectedDateint,
             ),
             GoalWidget(
-              selectedDay: selectedDate,
+              selectedDay: selectedDateint,
             ),
           ],
         ),
@@ -104,7 +103,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class GoalWidget extends StatelessWidget {
-  final String selectedDay;
+  final int selectedDay;
   const GoalWidget({
     Key? key,
     required this.selectedDay,
@@ -114,7 +113,7 @@ class GoalWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     String goal =
         context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docfirst ??
-            'aaa';
+            '새로운 목표를 써 보세요';
     return Column(
       children: [
         Text('오늘의 목표'),
@@ -146,7 +145,7 @@ class GoalWidget extends StatelessWidget {
 }
 
 class DiaryWidget extends StatelessWidget {
-  final String selectedDay;
+  final int selectedDay;
 
   const DiaryWidget({
     Key? key,
@@ -155,12 +154,15 @@ class DiaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String doc1 = context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docfirst??
-        '새로운 일기를 써보세요';
+    String doc1 =
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docfirst ??
+            '새로운 일기를 써 보세요';
     String doc2 =
-        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docsecond ?? '';
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docsecond ??
+            '';
     String doc3 =
-        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docthird ?? '';
+        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docthird ??
+            '';
     return Builder(builder: (BuildContext context) {
       return Column(
         children: [

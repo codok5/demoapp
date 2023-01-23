@@ -1,6 +1,7 @@
 import 'package:behapp/hivecustomobject/emotion_diary.dart';
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
+import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -18,7 +19,10 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
   TextEditingController _textEditingController2 = TextEditingController();
   TextEditingController _textEditingController3 = TextEditingController();
   Emotion selectedEmotion = Emotion.initial;
-  final FocusNode focusNode = FocusNode();
+  final formkey1 = GlobalKey<FormState>();
+  final formkey2 = GlobalKey<FormState>();
+  final formkey3 = GlobalKey<FormState>();
+
   late ScrollController _scrollController;
 
   @override
@@ -46,6 +50,10 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)?.settings.arguments as Writeargument;
+    final String date = format.format(arg.date);
+    final String day = formatw.format(arg.date);
+    final int dateindex = formatdatetoint(formatint.format(arg.date));
+
     return Material(
       child: GestureDetector(
         onTap: () {
@@ -61,7 +69,7 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                arg.date,
+                '$date $day',
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -80,17 +88,19 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                         Column(
                           children: [
                             textform(
-                                textEditingController1:
-                                    _textEditingController1),
+                              textEditingController1: _textEditingController1,
+                              formkey: formkey1,
+                            ),
                             textform2(
-                                scrollController: _scrollController,
-                                textEditingController2:
-                                    _textEditingController2),
+                              scrollController: _scrollController,
+                              textEditingController2: _textEditingController2,
+                              formkey: formkey2,
+                            ),
                             textform3(
-                                focusNode: focusNode,
-                                scrollController: _scrollController,
-                                textEditingController3:
-                                    _textEditingController3),
+                              scrollController: _scrollController,
+                              textEditingController3: _textEditingController3,
+                              formkey: formkey3,
+                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -145,7 +155,6 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                                           setState(() {
                                             selectedEmotion = Emotion.tired;
                                           });
-                                          print(selectedEmotion);
                                         },
                                         icon: Image.asset(
                                             'assets/images/tired.png')),
@@ -208,26 +217,18 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
                                   side: BorderSide(color: Colors.black),
                                   backgroundColor: Colors.blueGrey.shade300),
                               onPressed: () {
-                                if (_textEditingController1.text.trim().length != 0 &&
-                                    _textEditingController2.text
-                                            .trim()
-                                            .length !=
-                                        0 &&
-                                    _textEditingController3.text
-                                            .trim()
-                                            .length !=
-                                        0) {
+                                if (formkey1.currentState!.validate() ||
+                                    formkey2.currentState!.validate() ||
+                                    formkey3.currentState!.validate()) {
                                   context
                                       .read<EmotionDiaryProvider>()
                                       .writeDiary(
-                                          arg.date,
+                                          dateindex,
                                           _textEditingController1.text,
                                           _textEditingController2.text,
                                           _textEditingController3.text,
                                           selectedEmotion);
                                   Navigator.pop(context);
-                                } else {
-                                  return;
                                 }
                               },
                               child: Text('생성'),
@@ -246,18 +247,19 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
 }
 
 class textform3 extends StatelessWidget {
-  const textform3({
+  textform3({
     Key? key,
-    required this.focusNode,
     required ScrollController scrollController,
     required TextEditingController textEditingController3,
+    required GlobalKey<FormState> formkey,
   })  : _scrollController = scrollController,
         _textEditingController3 = textEditingController3,
+        formkey = formkey,
         super(key: key);
 
-  final FocusNode focusNode;
   final ScrollController _scrollController;
   final TextEditingController _textEditingController3;
+  final GlobalKey<FormState> formkey;
 
   @override
   Widget build(BuildContext context) {
@@ -270,33 +272,41 @@ class textform3 extends StatelessWidget {
           width: 5,
         ),
       ),
-      child: TextFormField(
-        textInputAction: TextInputAction.done,
-        onTap: () {
-          _scrollController.animateTo(
-            250,
-            duration: Duration(milliseconds: 600),
-            curve: Curves.ease,
-          );
-        },
-        onSaved: (newValue) {
-          print(_textEditingController3.text);
-        },
-        controller: _textEditingController3,
-        style: TextStyle(
-          fontSize: 30,
-        ),
-        keyboardType: TextInputType.multiline,
-        maxLines: 4,
-        decoration: InputDecoration(
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent)),
-          labelText: '오늘의 슬픔은 무엇인가요?',
-          floatingLabelStyle: TextStyle(color: Colors.blueGrey),
-          filled: true,
-          fillColor: Colors.blueGrey.shade100,
-          contentPadding: EdgeInsets.all(
-            10,
+      child: Form(
+        key: formkey,
+        child: TextFormField(
+          validator: (value) {
+            if (value!.trim().isEmpty) {
+              return '글자를 입력해 주세요';
+            } else {
+              return null;
+            }
+          },
+          textInputAction: TextInputAction.newline,
+          onTap: () {
+            _scrollController.animateTo(
+              250,
+              duration: Duration(milliseconds: 600),
+              curve: Curves.ease,
+            );
+          },
+          onSaved: (newValue) {},
+          controller: _textEditingController3,
+          style: TextStyle(
+            fontSize: 30,
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: 4,
+          decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent)),
+            labelText: '오늘의 슬픔은 무엇인가요?',
+            floatingLabelStyle: TextStyle(color: Colors.blueGrey),
+            filled: true,
+            fillColor: Colors.blueGrey.shade100,
+            contentPadding: EdgeInsets.all(
+              10,
+            ),
           ),
         ),
       ),
@@ -305,16 +315,19 @@ class textform3 extends StatelessWidget {
 }
 
 class textform2 extends StatelessWidget {
-  const textform2({
+  textform2({
     Key? key,
     required ScrollController scrollController,
     required TextEditingController textEditingController2,
-  })  : _textEditingController2 = textEditingController2,
-        _scrollController = scrollController,
+    required GlobalKey<FormState> formkey,
+  })  : _scrollController = scrollController,
+        _textEditingController2 = textEditingController2,
+        formkey = formkey,
         super(key: key);
 
-  final TextEditingController _textEditingController2;
   final ScrollController _scrollController;
+  final TextEditingController _textEditingController2;
+  final GlobalKey<FormState> formkey;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -326,33 +339,41 @@ class textform2 extends StatelessWidget {
           width: 5,
         ),
       ),
-      child: TextFormField(
-        textInputAction: TextInputAction.done,
-        onTap: () {
-          _scrollController.animateTo(
-            170,
-            duration: Duration(milliseconds: 600),
-            curve: Curves.ease,
-          );
-        },
-        onSaved: (newValue) {
-          print(_textEditingController2.text);
-        },
-        controller: _textEditingController2,
-        style: TextStyle(
-          fontSize: 30,
-        ),
-        keyboardType: TextInputType.multiline,
-        maxLines: 4,
-        decoration: InputDecoration(
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent)),
-          labelText: '오늘의 행복은 무엇인가요?',
-          floatingLabelStyle: TextStyle(color: Colors.blueGrey),
-          filled: true,
-          fillColor: Colors.blueGrey.shade100,
-          contentPadding: EdgeInsets.all(
-            10,
+      child: Form(
+        key: formkey,
+        child: TextFormField(
+          validator: (value) {
+            if (value!.trim().isEmpty) {
+              return '글자를 입력해 주세요';
+            } else {
+              return null;
+            }
+          },
+          textInputAction: TextInputAction.newline,
+          onTap: () {
+            _scrollController.animateTo(
+              170,
+              duration: Duration(milliseconds: 600),
+              curve: Curves.ease,
+            );
+          },
+          onSaved: (newValue) {},
+          controller: _textEditingController2,
+          style: TextStyle(
+            fontSize: 30,
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: 4,
+          decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent)),
+            labelText: '오늘의 행복은 무엇인가요?',
+            floatingLabelStyle: TextStyle(color: Colors.blueGrey),
+            filled: true,
+            fillColor: Colors.blueGrey.shade100,
+            contentPadding: EdgeInsets.all(
+              10,
+            ),
           ),
         ),
       ),
@@ -361,13 +382,16 @@ class textform2 extends StatelessWidget {
 }
 
 class textform extends StatelessWidget {
-  const textform({
+  textform({
     Key? key,
     required TextEditingController textEditingController1,
+    required GlobalKey<FormState> formkey,
   })  : _textEditingController1 = textEditingController1,
+        formkey = formkey,
         super(key: key);
 
   final TextEditingController _textEditingController1;
+  final GlobalKey<FormState> formkey;
 
   @override
   Widget build(BuildContext context) {
@@ -380,27 +404,35 @@ class textform extends StatelessWidget {
           width: 5,
         ),
       ),
-      child: TextFormField(
-        textInputAction: TextInputAction.done,
-        onTap: () {},
-        onSaved: (newValue) {
-          print(_textEditingController1.text);
-        },
-        controller: _textEditingController1,
-        style: TextStyle(
-          fontSize: 30,
-        ),
-        keyboardType: TextInputType.multiline,
-        maxLines: 4,
-        decoration: InputDecoration(
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent)),
-          labelText: '오늘 하루는 무엇을 했나요?',
-          floatingLabelStyle: TextStyle(color: Colors.blueGrey),
-          filled: true,
-          fillColor: Colors.blueGrey.shade100,
-          contentPadding: EdgeInsets.all(
-            10,
+      child: Form(
+        key: formkey,
+        child: TextFormField(
+          validator: (value) {
+            if (value!.trim().isEmpty) {
+              return '글자를 입력해 주세요';
+            } else {
+              return null;
+            }
+          },
+          textInputAction: TextInputAction.newline,
+          onTap: () {},
+          onSaved: (newValue) {},
+          controller: _textEditingController1,
+          style: TextStyle(
+            fontSize: 30,
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: 4,
+          decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent)),
+            labelText: '오늘 하루는 무엇을 했나요?',
+            floatingLabelStyle: TextStyle(color: Colors.blueGrey),
+            filled: true,
+            fillColor: Colors.blueGrey.shade100,
+            contentPadding: EdgeInsets.all(
+              10,
+            ),
           ),
         ),
       ),

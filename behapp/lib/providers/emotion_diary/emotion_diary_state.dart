@@ -1,7 +1,7 @@
 part of 'emotion_diary_provider.dart';
 
 Box<EmotionDiaryObject> diarydb = Hive.box('emotiondiary');
-final key = diarydb.keys;
+final diarykey = diarydb.keys;
 final diary = diarydb.values;
 
 class EmotionDiaryState extends Equatable {
@@ -12,7 +12,7 @@ class EmotionDiaryState extends Equatable {
   });
 
   factory EmotionDiaryState.initial() {
-    return EmotionDiaryState(diarydata: Map.fromIterables(key, diary));
+    return EmotionDiaryState(diarydata: Map.fromIterables(diarykey, diary));
   }
 
   @override

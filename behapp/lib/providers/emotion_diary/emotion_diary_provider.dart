@@ -10,8 +10,8 @@ class EmotionDiaryProvider extends StateNotifier<EmotionDiaryState>
   EmotionDiaryProvider() : super(EmotionDiaryState.initial());
 
   void writeDiary(
-      String date, String doc1, String doc2, String doc3, Emotion emotion) {
-    Map<String, EmotionDiaryObject> ndiarydata = {
+      int date, String doc1, String doc2, String doc3, Emotion emotion) {
+    Map<int, EmotionDiaryObject> ndiarydata = {
       ...state.diarydata,
       date: EmotionDiaryObject(
         docfirst: doc1,
