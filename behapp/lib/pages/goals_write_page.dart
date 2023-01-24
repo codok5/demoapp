@@ -41,30 +41,32 @@ class _GoalsWritePageState extends State<GoalsWritePage> {
             Row(
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    setState(() async {
-                      startday = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(DateTime.now().year - 1),
-                              lastDate: DateTime(DateTime.now().year + 50)) ??
-                          DateTime.now();
+                  onPressed: () async {
+                    final _startday = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(DateTime.now().year - 1),
+                            lastDate: DateTime(DateTime.now().year + 50)) ??
+                        DateTime.now();
+                    setState(() {
+                      startday = _startday;
                     });
                   },
                   child: Text('시작 날짜'),
                 ),
                 ElevatedButton(
-                  onPressed: (() {
-                    setState(() async {
-                      endday = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(DateTime.now().year - 1),
-                            lastDate: DateTime(DateTime.now().year + 50),
-                          ) ??
-                          DateTime.now();
+                  onPressed: () async {
+                    final _endday = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(DateTime.now().year - 1),
+                          lastDate: DateTime(DateTime.now().year + 50),
+                        ) ??
+                        DateTime.now();
+                    setState(() {
+                      endday = _endday;
                     });
-                  }),
+                  },
                   child: Text('완료 날짜'),
                 ),
               ],
@@ -74,31 +76,33 @@ class _GoalsWritePageState extends State<GoalsWritePage> {
             SizedBox(
               height: 100,
             ),
-            Container(
-              margin: EdgeInsets.all(
-                5,
-              ),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.amber.shade50,
-                  border: Border.all(
-                    width: 3,
-                    color: Colors.black,
-                  )),
-              child: Form(
-                key: _formkey1,
-                child: TextFormField(
-                  controller: textEditingController1,
-                  decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    labelText: '목표를 설정하세요!',
-                    floatingLabelStyle: TextStyle(color: Colors.blueGrey),
-                    filled: true,
-                    fillColor: Colors.blueGrey.shade100,
-                    contentPadding: EdgeInsets.all(
-                      10,
+            SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.all(
+                  5,
+                ),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.amber.shade50,
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.black,
+                    )),
+                child: Form(
+                  key: _formkey1,
+                  child: TextFormField(
+                    controller: textEditingController1,
+                    decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      labelText: '목표를 설정하세요!',
+                      floatingLabelStyle: TextStyle(color: Colors.blueGrey),
+                      filled: true,
+                      fillColor: Colors.blueGrey.shade100,
+                      contentPadding: EdgeInsets.all(
+                        10,
+                      ),
                     ),
                   ),
                 ),

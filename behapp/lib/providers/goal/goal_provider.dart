@@ -24,14 +24,11 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
       ...state.goaldata,
       id: goalObject,
     };
-
-    state.copyWith(goaldata: newgoaldata);
-
+    state = state.copyWith(goaldata: newgoaldata);
     goaldb.put(
       id,
       goalObject,
     );
-
     tododb.put(
       id,
       [],
@@ -39,6 +36,9 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
   }
 
   void deletegoal(String id) {
+    Map<dynamic, GoalObject> newgoaldata = state.goaldata;
+    newgoaldata.remove(id);
+    state = state.copyWith(goaldata: newgoaldata);
     goaldb.delete(id);
     tododb.delete(id);
   }

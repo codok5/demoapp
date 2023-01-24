@@ -18,6 +18,8 @@ class GoalState extends Equatable {
     );
   }
 
+
+
   @override
   List<Object> get props => [goaldata];
 
