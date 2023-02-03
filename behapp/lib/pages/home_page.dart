@@ -1,5 +1,6 @@
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/goals_page.dart';
+import 'package:behapp/providers/today_progress/date_progress_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -89,8 +90,14 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            DiaryWidget(
-              selectedDay: selectedDateint,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, DiaryPage.routeName,
+                    arguments: _selectedDay);
+              },
+              child: DiaryWidget(
+                selectedDay: selectedDateint,
+              ),
             ),
             GoalWidget(
               selectedDay: selectedDateint,
@@ -111,9 +118,8 @@ class GoalWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String goal =
-        context.watch<EmotionDiaryState>().diarydata[selectedDay]?.docfirst ??
-            '새로운 목표를 써 보세요';
+    String goal = ??
+        'asd';
     return Column(
       children: [
         Text('오늘의 목표'),

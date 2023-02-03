@@ -271,6 +271,12 @@ class textform3 extends StatelessWidget {
           color: Colors.black,
           width: 5,
         ),
+        image: DecorationImage(
+          fit: BoxFit.fill,
+          image: AssetImage(
+            'assets/images/paper.jpg',
+          ),
+        ),
       ),
       child: Form(
         key: formkey,
@@ -303,7 +309,6 @@ class textform3 extends StatelessWidget {
             labelText: '오늘의 슬픔은 무엇인가요?',
             floatingLabelStyle: TextStyle(color: Colors.blueGrey),
             filled: true,
-            fillColor: Colors.blueGrey.shade100,
             contentPadding: EdgeInsets.all(
               10,
             ),
@@ -338,6 +343,12 @@ class textform2 extends StatelessWidget {
           color: Colors.black,
           width: 5,
         ),
+        image: DecorationImage(
+          fit: BoxFit.fill,
+          image: AssetImage(
+            'assets/images/paper.jpg',
+          ),
+        ),
       ),
       child: Form(
         key: formkey,
@@ -370,7 +381,6 @@ class textform2 extends StatelessWidget {
             labelText: '오늘의 행복은 무엇인가요?',
             floatingLabelStyle: TextStyle(color: Colors.blueGrey),
             filled: true,
-            fillColor: Colors.blueGrey.shade100,
             contentPadding: EdgeInsets.all(
               10,
             ),
@@ -403,6 +413,12 @@ class textform extends StatelessWidget {
           color: Colors.black,
           width: 5,
         ),
+        image: DecorationImage(
+          fit: BoxFit.fill,
+          image: AssetImage(
+            'assets/images/paper.jpg',
+          ),
+        ),
       ),
       child: Form(
         key: formkey,
@@ -429,7 +445,6 @@ class textform extends StatelessWidget {
             labelText: '오늘 하루는 무엇을 했나요?',
             floatingLabelStyle: TextStyle(color: Colors.blueGrey),
             filled: true,
-            fillColor: Colors.blueGrey.shade100,
             contentPadding: EdgeInsets.all(
               10,
             ),

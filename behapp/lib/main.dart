@@ -1,6 +1,9 @@
 import 'package:behapp/firebase_options.dart';
 import 'package:behapp/hivecustomobject/emotion_diary.dart';
 import 'package:behapp/hivecustomobject/goal.dart';
+import 'package:behapp/hivecustomobject/today_todo_progress.dart';
+import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/library/local_notification.dart';
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/diary_write_page.dart';
 import 'package:behapp/pages/goals_page.dart';
@@ -8,6 +11,7 @@ import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
+import 'package:behapp/providers/today_progress/date_progress_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
@@ -20,12 +24,14 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(EmotionDiaryObjectAdapter());
   Hive.registerAdapter(EmotionAdapter());
-  Hive.registerAdapter(GoalObjectAdapter());
   Hive.registerAdapter(GoalTypeAdapter());
-  Hive.registerAdapter(todoObjectAdapter());
+  Hive.registerAdapter(GoalObjectAdapter());
+  Hive.registerAdapter(TodoTypeAdapter());
+  Hive.registerAdapter(TodoObjectAdapter());
+  Hive.registerAdapter(TodayTodoProgressObjectAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
-  await Hive.openBox<List<todoObject>>('todo');
+  await Hive.openBox<List<dynamic>>('todoprogress');
   await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -33,8 +39,19 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    LocalNotification.initialize();
+    super.initState();
+  }
 
   // This widget is the root of your application.
   @override
@@ -46,6 +63,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<GoalProvider, GoalState>(
           create: (context) => GoalProvider(),
+        ),
+        StateNotifierProvider<DateProgressProvider, DateProgressState>(
+          create: (context) => DateProgressProvider(),
         ),
       ],
       child: MaterialApp(
