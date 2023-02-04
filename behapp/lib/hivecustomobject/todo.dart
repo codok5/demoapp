@@ -2,17 +2,22 @@ import 'package:hive/hive.dart';
 
 part 'todo.g.dart';
 
-
 @HiveType(typeId: 4)
 enum TodoType {
   @HiveField(17)
-  completed,
+  nontimer,
   @HiveField(18)
-  time,
+  timer,
 }
 
 @HiveType(typeId: 5)
 class TodoObject {
+  @HiveField(0)
+  final String id_goal;
+
+  @HiveField(1)
+  final String id_todo;
+
   @HiveField(9)
   final String name;
 
@@ -22,8 +27,12 @@ class TodoObject {
   @HiveField(12)
   final int goaltime;
   TodoObject({
+    required this.id_goal,
+    required this.id_todo,
     required this.name,
     required this.todoType,
     required this.goaltime,
   });
+
+  
 }

@@ -7,6 +7,7 @@ enum GoalProgressStatus {
 }
 
 Box<GoalObject> goaldb = Hive.box('goal');
+
 final goalkey = goaldb.keys;
 final goalvalue = goaldb.values;
 

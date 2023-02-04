@@ -157,11 +157,11 @@ class _GoalsWritePageState extends State<GoalsWritePage> {
                   onPressed: (() {
                     if (_formkey1.currentState!.validate()) {
                       context.read<GoalProvider>().makegoal(
-                            textEditingController1.text,
-                            textEditingController2.text,
-                            startday,
-                            endday,
-                            goalType,
+                            name: textEditingController1.text,
+                            content: textEditingController2.text,
+                            startday: startday,
+                            endday: endday,
+                            goalType: goalType,
                           );
 
                       Navigator.pop(context);

@@ -1,5 +1,6 @@
-import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:hive/hive.dart';
+
+
 
 part 'goal.g.dart';
 
@@ -18,7 +19,7 @@ enum GoalType {
 @HiveType(typeId: 3)
 class GoalObject {
   @HiveField(0)
-  final String id;
+  final String id_goal;
 
   @HiveField(1)
   final String name;
@@ -39,20 +40,21 @@ class GoalObject {
   bool completed;
 
   @HiveField(7)
-  Map<dynamic,TodoObject> todo_map;
+  List<dynamic> id_todo_list;
 
   @HiveField(8)
   final GoalType goalType;
-
   GoalObject({
-    required this.id,
+    required this.id_goal,
     required this.name,
     required this.content,
     required this.startday,
     required this.endday,
     required this.presentprogress,
     required this.completed,
-    required this.todo_map,
+    required this.id_todo_list,
     required this.goalType,
   });
+
+  
 }

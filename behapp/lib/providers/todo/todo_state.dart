@@ -1,29 +1,30 @@
-// part of 'todo_provider.dart';
-// final todokey = tododb.keys;
-// final todovalue = tododb.values;
+part of 'todo_provider.dart';
 
-// class TodoState extends Equatable {
-//   final Map<dynamic, List<dynamic>> tododata;
-//   TodoState({
-//     required this.tododata,
-//   });
-//   factory TodoState.initial() {
-//     return TodoState(
-//       tododata: Map.fromIterables(todokey, todovalue),
-//     );
-//   }
+Box<TodoObject> tododb = Hive.box('todo');
+final todokey = tododb.keys;
+final todovalue = tododb.values;
 
-//   @override
-//   List<Object> get props => [tododata];
+class TodoState extends Equatable {
+  final Map<dynamic, TodoObject> tododata;
+  TodoState({
+    required this.tododata,
+  });
 
-//   @override
-//   String toString() => 'TodoState(tododata: $tododata)';
+  factory TodoState.initial() {
+    return TodoState(tododata: Map.fromIterables(todokey, todovalue));
+  }
 
-//   TodoState copyWith({
-//     Map<dynamic, List<dynamic>>? tododata,
-//   }) {
-//     return TodoState(
-//       tododata: tododata ?? this.tododata,
-//     );
-//   }
-// }
+  @override
+  List<Object> get props => [tododata];
+
+  @override
+  String toString() => 'TodoState(tododata: $tododata)';
+
+  TodoState copyWith({
+    Map<dynamic, TodoObject>? tododata,
+  }) {
+    return TodoState(
+      tododata: tododata ?? this.tododata,
+    );
+  }
+}

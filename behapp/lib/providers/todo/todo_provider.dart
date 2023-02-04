@@ -1,33 +1,61 @@
-// import 'package:behapp/hivecustomobject/todo.dart';
-// import 'package:behapp/providers/goal/goal_provider.dart';
-// import 'package:equatable/equatable.dart';
-// import 'package:state_notifier/state_notifier.dart';
-// import 'package:uuid/uuid.dart';
-// part 'todo_state.dart';
+import 'package:behapp/hivecustomobject/goal.dart';
+import 'package:behapp/hivecustomobject/today_todo_progress.dart';
+import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/providers/goal/goal_provider.dart';
+import 'package:behapp/providers/today_progress/date_progress_provider.dart';
+import 'package:behapp/utils/formatter.dart';
+import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
+import 'package:state_notifier/state_notifier.dart';
+import 'package:uuid/uuid.dart';
+part 'todo_state.dart';
 
-// class TodoProvider extends StateNotifier<TodoState> with LocatorMixin {
-//   TodoProvider() : super(TodoState.initial());
+class TodoProvider extends StateNotifier<TodoState> with LocatorMixin {
+  TodoProvider() : super(TodoState.initial());
 
-//   void maketodo(
-//     String id_goal,
-//     String name,
-//     TodoType todoType,
-//     int goaltime,
-//   ) async {
-//     final String id_todo = Uuid().v4();
-//     final TodoObject todo = TodoObject(
-//       name: name,
-//       todoType: todoType,
-//       goaltime: goaltime,
-//     );
-//     List<dynamic> newtodo = [todo];
-//     newtodo.addAll(tododb.get(id_todo) ?? List.empty());
+  void maketodo({
+    required String id_goal,
+    required String name,
+    required TodoType todoType,
+    required int goaltime,
+  }) {
+    final id_todo = Uuid().v1();
+    read<GoalProvider>().addidtodo(id_goal, id_todo);
+    final TodoObject todoObject = TodoObject(
+        id_goal: id_goal,
+        id_todo: id_todo,
+        name: name,
+        todoType: todoType,
+        goaltime: goaltime);
+    final Map<dynamic, TodoObject> tododata = {
+      ...state.tododata,
+      id_todo: todoObject
+    };
+    state = state.copyWith(tododata: tododata);
+    tododb.put(id_todo, todoObject);
 
-//     Map<dynamic, List<dynamic>> newtododata = state.tododata;
-//     newtododata[id_todo] = newtodo;
-//     state = state.copyWith(tododata: newtododata);
-//     tododb.put(id_todo, newtodo);
-//   }
+    GoalObject? newgoalobject = goaldb.get(id_goal);
 
-//   void deletetodo() {}
-// }
+    List<int> dateprogressdb_keys = [];
+    dateprogressdb_keys = List.generate(
+        newgoalobject!.endday.difference(newgoalobject.startday).inDays + 1,
+        (i) => formatdatetoint(formatint.format(DateTime(
+            newgoalobject.startday.year,
+            newgoalobject.startday.month,
+            newgoalobject.startday.day + (i)))));
+    for (int key in dateprogressdb_keys) {
+      dateprogressdb.put(key, [
+        ...dateprogressdb.get(key) ?? [],
+        TodayTodoProgressObject(
+            id_todo: id_todo, completed: false, done_time: 0)
+      ]);
+    }
+  }
+
+  void deletetodo(String id_todo) {
+    final Map<dynamic, TodoObject> tododata = {...state.tododata};
+    tododata.remove(id_todo);
+    state = state.copyWith(tododata: tododata);
+    tododb.delete(id_todo);
+  }
+}

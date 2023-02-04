@@ -1,6 +1,5 @@
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/goals_page.dart';
-import 'package:behapp/providers/today_progress/date_progress_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -118,8 +117,7 @@ class GoalWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String goal = ??
-        'asd';
+    String goal = 'asd';
     return Column(
       children: [
         Text('오늘의 목표'),

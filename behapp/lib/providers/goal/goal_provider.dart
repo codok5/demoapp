@@ -1,8 +1,4 @@
 import 'package:behapp/hivecustomobject/goal.dart';
-import 'package:behapp/hivecustomobject/today_todo_progress.dart';
-import 'package:behapp/hivecustomobject/todo.dart';
-import 'package:behapp/providers/today_progress/date_progress_provider.dart';
-import 'package:behapp/utils/formatter.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:hive/hive.dart';
@@ -13,31 +9,33 @@ part 'goal_state.dart';
 class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
   GoalProvider() : super(GoalState.initial());
 
-  void makegoal(
-    String name,
-    String content,
-    DateTime startday,
-    DateTime endday,
-    GoalType goalType,
-  ) {
-    final String id = Uuid().v1();
+  void makegoal({
+    required String name,
+    required String content,
+    required DateTime startday,
+    required DateTime endday,
+    required GoalType goalType,
+  }) {
+    final String id_goal = Uuid().v1();
     final GoalObject goalObject = GoalObject(
-      id: id,
+      id_goal: id_goal,
       name: name,
       content: content,
       startday: startday,
       endday: endday,
       completed: false,
       presentprogress: 0,
-      todo_map: {},
+      id_todo_list: [],
       goalType: goalType,
     );
     Map<dynamic, GoalObject> newgoaldata = {
       ...state.goaldata,
-      id: goalObject,
+      id_goal: goalObject,
     };
-    Map<dynamic, Map<String, dynamic>> progressmap = state.goalprogressdata;
-    progressmap[id] = {
+    Map<dynamic, Map<String, dynamic>> progressmap = {
+      ...state.goalprogressdata
+    };
+    progressmap[id_goal] = {
       'totalprogress': endday.difference(startday).inDays + 1,
       'presentprogress': 0,
       'progressstatus': GoalProgressStatus.start,
@@ -46,87 +44,68 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
     state =
         state.copyWith(goaldata: newgoaldata, goalprogressdata: progressmap);
     goaldb.put(
-      id,
+      id_goal,
       goalObject,
     );
   }
 
-  void deletegoal(String id) {
-    Map<dynamic, GoalObject> newgoaldata = state.goaldata;
-    newgoaldata.remove(id);
-    Map<dynamic, Map<String, dynamic>> progressmap = state.goalprogressdata;
-    progressmap.remove(id);
+  void deletegoal(String id_goal) {
+    Map<dynamic, GoalObject> newgoaldata = {...state.goaldata};
+    newgoaldata.remove(id_goal);
+    Map<dynamic, Map<String, dynamic>> progressmap = {
+      ...state.goalprogressdata
+    };
+    progressmap.remove(id_goal);
+
     state =
         state.copyWith(goaldata: newgoaldata, goalprogressdata: progressmap);
-    goaldb.delete(id);
+    goaldb.delete(id_goal);
   }
 
-  void togglegoal(String id) {
-    GoalObject? toggledgoal = goaldb.get(id);
+  void togglegoal(String id_goal) {
+    GoalObject? toggledgoal = goaldb.get(id_goal);
     toggledgoal!.completed = !toggledgoal.completed;
     Map<dynamic, GoalObject> newgoaldata = state.goaldata;
-    newgoaldata[id] = toggledgoal;
+    newgoaldata[id_goal] = toggledgoal;
     state = state.copyWith(goaldata: newgoaldata);
-    goaldb.put(id, toggledgoal);
+    goaldb.put(id_goal, toggledgoal);
   }
 
-  void addprogress(String id) {
+  void addprogress(String id_goal) {
     final Map<dynamic, Map<String, dynamic>> progressmap = {
       ...state.goalprogressdata,
     };
-    progressmap[id] = {
-      'totalprogress': state.goalprogressdata[id]!['totalprogress'],
-      'presentprogress': state.goalprogressdata[id]!['presentprogress'] + 1,
-      'progressstatus': (state.goalprogressdata[id]!['presentprogress'] + 1) /
-                  state.goalprogressdata[id]!['totalprogress'] >=
-              1
-          ? GoalProgressStatus.completed
-          : (state.goalprogressdata[id]!['presentprogress'] + 1) /
-                      state.goalprogressdata[id]!['totalprogress'] >
-                  0
-              ? GoalProgressStatus.inprogress
-              : GoalProgressStatus.start,
+    progressmap[id_goal] = {
+      'totalprogress': state.goalprogressdata[id_goal]!['totalprogress'],
+      'presentprogress':
+          state.goalprogressdata[id_goal]!['presentprogress'] + 1,
+      'progressstatus':
+          (state.goalprogressdata[id_goal]!['presentprogress'] + 1) /
+                      state.goalprogressdata[id_goal]!['totalprogress'] >=
+                  1
+              ? GoalProgressStatus.completed
+              : (state.goalprogressdata[id_goal]!['presentprogress'] + 1) /
+                          state.goalprogressdata[id_goal]!['totalprogress'] >
+                      0
+                  ? GoalProgressStatus.inprogress
+                  : GoalProgressStatus.start,
     };
 
-    GoalObject? addedgoal = goaldb.get(id);
+    GoalObject? addedgoal = goaldb.get(id_goal);
     addedgoal!.presentprogress = addedgoal.presentprogress + 1;
     Map<dynamic, GoalObject> newgoaldata = state.goaldata;
-    newgoaldata[id] = addedgoal;
+    newgoaldata[id_goal] = addedgoal;
     state = state.copyWith(
       goaldata: newgoaldata,
       goalprogressdata: progressmap,
     );
-    goaldb.put(id, addedgoal);
+    goaldb.put(id_goal, addedgoal);
   }
 
-  void addtodo(String id_goal, String name, TodoType todoType, int goaltime) {
-    final TodoObject todoObject =
-        TodoObject(name: name, todoType: todoType, goaltime: goaltime);
-    final String id_todo = Uuid().v4();
-    GoalObject? newgoalobject = goaldb.get(id_goal);
-    final Map<dynamic, TodoObject> todo_map = {
-      ...newgoalobject!.todo_map,
-      id_todo: todoObject,
-    };
-    newgoalobject.todo_map = todo_map;
-    Map<dynamic, GoalObject> newgoaldata = state.goaldata;
-    newgoaldata[id_goal] = newgoalobject;
-    state = state.copyWith(goaldata: newgoaldata);
-    goaldb.put(id_goal, newgoalobject);
-
-    List<int> dateprogressdb_keys = [];
-    dateprogressdb_keys = List.generate(
-        newgoalobject.endday.difference(newgoalobject.startday).inDays + 1,
-        (i) => formatdatetoint(formatint.format(DateTime(
-            newgoalobject.startday.year,
-            newgoalobject.startday.month,
-            newgoalobject.startday.day + (i)))));
-    for (int key in dateprogressdb_keys) {
-      dateprogressdb.put(key, [
-        ...dateprogressdb.get(key) ?? [],
-        TodayTodoProgressObject(
-            id_todo: id_todo, completed: false, done_time: 0)
-      ]);
-    }
+  void addidtodo(String id_goal, String id_todo) {
+    Map<dynamic, GoalObject> goaldata = {...state.goaldata};
+    goaldata[id_goal]!.id_todo_list.add(id_todo);
+    state = state.copyWith(goaldata: goaldata);
+    goaldb.put(id_goal, goaldata[id_goal]!);
   }
 }

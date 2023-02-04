@@ -12,6 +12,7 @@ import 'package:behapp/pages/home_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
 import 'package:behapp/providers/today_progress/date_progress_provider.dart';
+import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
@@ -31,6 +32,7 @@ void main() async {
   Hive.registerAdapter(TodayTodoProgressObjectAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
+  await Hive.openBox<TodoObject>('todo');
   await Hive.openBox<List<dynamic>>('todoprogress');
   await initializeDateFormatting();
   await Firebase.initializeApp(
@@ -63,6 +65,9 @@ class _MyAppState extends State<MyApp> {
         ),
         StateNotifierProvider<GoalProvider, GoalState>(
           create: (context) => GoalProvider(),
+        ),
+        StateNotifierProvider<TodoProvider, TodoState>(
+          create: (context) => TodoProvider(),
         ),
         StateNotifierProvider<DateProgressProvider, DateProgressState>(
           create: (context) => DateProgressProvider(),

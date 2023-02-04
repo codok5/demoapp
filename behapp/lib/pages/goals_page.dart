@@ -2,6 +2,7 @@ import 'package:behapp/hivecustomobject/goal.dart';
 import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
+import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,21 +15,13 @@ class GoalsPage extends StatefulWidget {
   State<GoalsPage> createState() => _GoalsPageState();
 }
 
-List goalselected = List.filled(100, false);
+List goalselected = List.filled(goaldb.keys.length, false);
+List<bool> isselected = [true, false];
 
 class _GoalsPageState extends State<GoalsPage> {
   TextEditingController textEditingController1 = TextEditingController();
   TextEditingController textEditingController2 = TextEditingController();
   final formkey = GlobalKey<FormState>();
-  bool iscompleted = true;
-  bool istime = false;
-  late List<bool> _isselected;
-
-  @override
-  void initState() {
-    _isselected = [iscompleted, istime];
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -41,29 +34,16 @@ class _GoalsPageState extends State<GoalsPage> {
   Widget build(BuildContext context) {
     final Map<dynamic, GoalObject> goaldata =
         context.watch<GoalState>().goaldata;
-    final progressdb = context.watch<GoalState>().goalprogressdata;
+    final Map<dynamic, Map<String, dynamic>> progressdb =
+        context.watch<GoalState>().goalprogressdata;
     final keylist_goal = goaldata.keys.toList();
     final goallist = goaldata.values.toList();
+    final Map<dynamic, TodoObject> tododata =
+        context.watch<TodoState>().tododata;
     final String date =
         format.format(ModalRoute.of(context)?.settings.arguments as DateTime);
     final String day =
         formatw.format(ModalRoute.of(context)?.settings.arguments as DateTime);
-
-    void toggletap(value) {
-      setState(() {
-        if (value == 0) {
-          iscompleted = true;
-          istime = false;
-        } else if (value == 1) {
-          iscompleted = false;
-          istime = true;
-        }
-        _isselected = [
-          iscompleted,
-          istime,
-        ];
-      });
-    }
 
     return Material(
       child: Scaffold(
@@ -159,12 +139,20 @@ class _GoalsPageState extends State<GoalsPage> {
                                             Row(
                                               children: [
                                                 Expanded(
-                                                  child: ListView.builder(
+                                                  child: ListView.separated(
+                                                    separatorBuilder:
+                                                        (context, index) {
+                                                      return Divider(
+                                                        height: 5,
+                                                        color:
+                                                            Colors.transparent,
+                                                      );
+                                                    },
                                                     shrinkWrap: true,
                                                     itemBuilder:
                                                         (context, indext) {
                                                       return goallist[index]
-                                                                  .todo_map
+                                                                  .id_todo_list
                                                                   .length ==
                                                               0
                                                           ? Text(
@@ -173,20 +161,76 @@ class _GoalsPageState extends State<GoalsPage> {
                                                                 fontSize: 20,
                                                               ),
                                                             )
-                                                          : Text(
-                                                              '${indext + 1}. ${goallist[index].todo_map.values.toList()[indext].name}',
-                                                              style: TextStyle(
-                                                                fontSize: 20,
+                                                          : GestureDetector(
+                                                              onTap: () async {
+                                                                return showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return Dialog(
+                                                                      child: Container(
+                                                                          height: MediaQuery.of(context).size.height / 3,
+                                                                          padding: EdgeInsets.all(20),
+                                                                          decoration: BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(
+                                                                              30,
+                                                                            ),
+                                                                          ),
+                                                                          child: Column(
+                                                                            children: [
+                                                                              Text(
+                                                                                '${tododata[goallist[index].id_todo_list[indext]]!.name}',
+                                                                              ),
+                                                                              Text(
+                                                                                tododata[goallist[index].id_todo_list[indext]]!.todoType == TodoType.nontimer ? '단순 완료형' : '타이머형',
+                                                                              ),
+                                                                              Text(tododata[goallist[index].id_todo_list[indext]]!.todoType == TodoType.timer ? '하루 목표 시간 : ${tododata[goallist[index].id_todo_list[indext]]!.goaltime}' : ''),
+                                                                            ],
+                                                                          )),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                              child: Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(5),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                10),
+                                                                        border:
+                                                                            Border.all(
+                                                                          width:
+                                                                              1,
+                                                                          color:
+                                                                              Colors.blueGrey,
+                                                                        )),
+                                                                child: Text(
+                                                                  ' ${tododata[goallist[index].id_todo_list[indext]]!.name}',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                  ),
+                                                                ),
                                                               ),
                                                             );
                                                     },
                                                     itemCount: goallist[index]
-                                                                .todo_map
+                                                                .id_todo_list
                                                                 .length ==
                                                             0
                                                         ? 1
                                                         : goallist[index]
-                                                            .todo_map
+                                                            .id_todo_list
                                                             .length,
                                                   ),
                                                 ),
@@ -218,13 +262,23 @@ class _GoalsPageState extends State<GoalsPage> {
                                                       ),
                                                       TextButton(
                                                         onPressed: (() {
+                                                          for (var id_todo
+                                                              in goallist[index]
+                                                                  .id_todo_list) {
+                                                            context
+                                                                .read<
+                                                                    TodoProvider>()
+                                                                .deletetodo(
+                                                                    id_todo);
+                                                          }
                                                           context
                                                               .read<
                                                                   GoalProvider>()
                                                               .deletegoal(
                                                                   goallist[
                                                                           index]
-                                                                      .id);
+                                                                      .id_goal);
+
                                                           setState(() {
                                                             goalselected[
                                                                 index] = false;
@@ -246,174 +300,9 @@ class _GoalsPageState extends State<GoalsPage> {
                                             ),
                                           ),
                                           ElevatedButton(
-                                              onPressed: () {
-                                                context
-                                                    .read<GoalProvider>()
-                                                    .addprogress(
-                                                        goallist[index].id);
-                                                setState(() {});
-                                              },
-                                              child: Text('g')),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  isScrollControlled: true,
-                                                  builder: (context) {
-                                                    return SingleChildScrollView(
-                                                      child: Container(
-                                                        padding: EdgeInsets.only(
-                                                            bottom:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .viewInsets
-                                                                    .bottom),
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .unfocus();
-                                                          },
-                                                          child: Container(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                              horizontal: 15,
-                                                              vertical: 25,
-                                                            ),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  '목표를 이루기 위해 새로운 일들을 계획해 보세요',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        22,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Form(
-                                                                  key: formkey,
-                                                                  child:
-                                                                      TextFormField(
-                                                                    validator:
-                                                                        (value) {
-                                                                      if (textEditingController1
-                                                                          .text
-                                                                          .trim()
-                                                                          .isEmpty) {
-                                                                        return '글자를 입력하세요';
-                                                                      } else {
-                                                                        return null;
-                                                                      }
-                                                                    },
-                                                                    controller:
-                                                                        textEditingController1,
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      labelText:
-                                                                          '할일을 정해보세요',
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 30,
-                                                                ),
-                                                                ToggleButtons(
-                                                                  children: [
-                                                                    Text(
-                                                                        '단순 완료'),
-                                                                    Text(
-                                                                        '시간 완료'),
-                                                                  ],
-                                                                  isSelected:
-                                                                      _isselected,
-                                                                  onPressed:
-                                                                      toggletap,
-                                                                ),
-                                                                istime
-                                                                    ? Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            '하루 목표시간을 설정하세요',
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                                15,
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                                50,
-                                                                            child:
-                                                                                TextField(
-                                                                              decoration: InputDecoration(
-                                                                                enabledBorder: UnderlineInputBorder(
-                                                                                  borderSide: BorderSide(
-                                                                                    width: 3,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              controller: textEditingController2,
-                                                                              keyboardType: TextInputType.number,
-                                                                              inputFormatters: [
-                                                                                FilteringTextInputFormatter.allow(RegExp('[0-9]'))
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          Text(
-                                                                            '분',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 18,
-                                                                              fontWeight: FontWeight.bold,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    : SizedBox(
-                                                                        height:
-                                                                            0,
-                                                                      ),
-                                                                ElevatedButton(
-                                                                  onPressed:
-                                                                      (() {
-                                                                    if (formkey
-                                                                        .currentState!
-                                                                        .validate()) {
-                                                                      context
-                                                                          .read<
-                                                                              GoalProvider>()
-                                                                          .addtodo(
-                                                                            goallist[index].id,
-                                                                            textEditingController1.text,
-                                                                            iscompleted
-                                                                                ? TodoType.completed
-                                                                                : TodoType.time,
-                                                                            iscompleted
-                                                                                ? 0
-                                                                                : int.parse(textEditingController2.text),
-                                                                          );
-                                                                      setState(
-                                                                          () {});
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    }
-                                                                  }),
-                                                                  child: Text(
-                                                                    '생성',
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  });
+                                            onPressed: () async {
+                                              return TodoWrite(
+                                                  context, goallist, index);
                                             },
                                             child: Text('매일의 할일 생성'),
                                           ),
@@ -435,6 +324,144 @@ class _GoalsPageState extends State<GoalsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> TodoWrite(
+      BuildContext context, List<GoalObject> goallist, int index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 25,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '목표를 이루기 위해 새로운 일들을 계획해 보세요',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Form(
+                          key: formkey,
+                          child: TextFormField(
+                            validator: (value) {
+                              if (textEditingController1.text.trim().isEmpty) {
+                                return '글자를 입력하세요';
+                              } else {
+                                return null;
+                              }
+                            },
+                            controller: textEditingController1,
+                            decoration: InputDecoration(
+                              labelText: '할일을 정해보세요',
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        ToggleButtons(
+                            children: [Text('단순 완료'), Text('시간 완료')],
+                            isSelected: isselected,
+                            onPressed: (index) {
+                              setState(() {
+                                if (index == 0) {
+                                  isselected = [true, false];
+                                } else if (index == 1) {
+                                  isselected = [false, true];
+                                }
+                              });
+                            }),
+                        isselected[1]
+                            ? Row(
+                                children: [
+                                  Text(
+                                    '하루 목표시간을 설정하세요',
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            width: 3,
+                                          ),
+                                        ),
+                                      ),
+                                      controller: textEditingController2,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp('[0-9]'))
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    '분',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : SizedBox(
+                                width: 0,
+                              ),
+                        ElevatedButton(
+                          onPressed: (() {
+                            if (formkey.currentState!.validate()) {
+                              context.read<TodoProvider>().maketodo(
+                                    id_goal: goallist[index].id_goal,
+                                    name: textEditingController1.text,
+                                    todoType: isselected[0]
+                                        ? TodoType.nontimer
+                                        : TodoType.timer,
+                                    goaltime: isselected[0]
+                                        ? 0
+                                        : int.parse(
+                                            textEditingController2.text),
+                                  );
+                              setState(() {
+                                textEditingController1.text = '';
+                                textEditingController2.text = '';
+                              });
+                              isselected = [true, true];
+                              Navigator.pop(context);
+                            }
+                          }),
+                          child: Text(
+                            '생성',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
