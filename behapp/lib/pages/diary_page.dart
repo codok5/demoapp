@@ -6,20 +6,7 @@ import 'package:behapp/hivecustomobject/emotion_diary.dart';
 import 'package:behapp/pages/diary_write_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 
-class Writeargument {
-  final DateTime date;
-  final String? doc1;
-  final String? doc2;
-  final String? doc3;
-  final Emotion? emotion;
-  Writeargument({
-    required this.date,
-    required this.doc1,
-    required this.doc2,
-    required this.doc3,
-    required this.emotion,
-  });
-}
+
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -33,12 +20,9 @@ class _DiaryPageState extends State<DiaryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String date =
-        format.format(ModalRoute.of(context)?.settings.arguments as DateTime);
-    final int dateint = formatdatetoint(formatint
-        .format(ModalRoute.of(context)?.settings.arguments as DateTime));
-    final String day =
-        formatw.format(ModalRoute.of(context)?.settings.arguments as DateTime);
+    final String date = format.format(DateTime.now());
+    final int dateint = formatdatetoint(formatint.format(DateTime.now()));
+    final String day = formatw.format(DateTime.now());
     final diarydata = context.watch<EmotionDiaryState>().diarydata;
     final String? doc1 = diarydata[dateint]?.docfirst;
     final String? doc2 = diarydata[dateint]?.docsecond;
@@ -73,13 +57,7 @@ class _DiaryPageState extends State<DiaryPage> {
               Navigator.pushNamed(
                 context,
                 DiaryWritePage.routeName,
-                arguments: Writeargument(
-                    date:
-                        ModalRoute.of(context)?.settings.arguments as DateTime,
-                    doc1: doc1,
-                    doc2: doc2,
-                    doc3: doc3,
-                    emotion: emoji),
+
               );
             },
             child: Text(

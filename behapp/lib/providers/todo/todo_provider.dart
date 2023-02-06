@@ -1,8 +1,9 @@
 import 'package:behapp/hivecustomobject/goal.dart';
 import 'package:behapp/hivecustomobject/today_todo_progress.dart';
 import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
-import 'package:behapp/providers/today_progress/date_progress_provider.dart';
+
 import 'package:behapp/utils/formatter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
@@ -43,19 +44,22 @@ class TodoProvider extends StateNotifier<TodoState> with LocatorMixin {
             newgoalobject.startday.year,
             newgoalobject.startday.month,
             newgoalobject.startday.day + (i)))));
+
     for (int key in dateprogressdb_keys) {
-      dateprogressdb.put(key, [
-        ...dateprogressdb.get(key) ?? [],
-        TodayTodoProgressObject(
-            id_todo: id_todo, completed: false, done_time: 0)
-      ]);
+      read<DateProgressProvider>().makedateprogress(
+          key,
+          TodayTodoProgressObject(
+              id_todo: id_todo, completed: false, done_time: 0));
     }
   }
 
   void deletetodo(String id_todo) {
     final Map<dynamic, TodoObject> tododata = {...state.tododata};
+    read<GoalProvider>()
+        .deleteidtodo(tododata[id_todo]!.id_goal, id_todo);
     tododata.remove(id_todo);
     state = state.copyWith(tododata: tododata);
     tododb.delete(id_todo);
+    read<DateProgressProvider>().deleteprogress(id_todo);
   }
 }

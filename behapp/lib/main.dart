@@ -9,12 +9,14 @@ import 'package:behapp/pages/diary_write_page.dart';
 import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
+import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
-import 'package:behapp/providers/today_progress/date_progress_provider.dart';
+
 import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -63,30 +65,35 @@ class _MyAppState extends State<MyApp> {
         StateNotifierProvider<EmotionDiaryProvider, EmotionDiaryState>(
           create: (context) => EmotionDiaryProvider(),
         ),
+        StateNotifierProvider<DateProgressProvider, DateProgressState>(
+          create: (context) => DateProgressProvider(),
+        ),
         StateNotifierProvider<GoalProvider, GoalState>(
           create: (context) => GoalProvider(),
         ),
         StateNotifierProvider<TodoProvider, TodoState>(
           create: (context) => TodoProvider(),
         ),
-        StateNotifierProvider<DateProgressProvider, DateProgressState>(
-          create: (context) => DateProgressProvider(),
-        ),
       ],
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            fontFamily: 'HiMelody',
-            primarySwatch: Colors.blue,
-          ),
-          home: const HomePage(),
-          routes: {
-            DiaryPage.routeName: (context) => const DiaryPage(),
-            DiaryWritePage.routeName: (context) => DiaryWritePage(),
-            GoalsPage.routeName: (context) => GoalsPage(),
-            GoalsWritePage.routeName: (context) => GoalsWritePage(),
-          }),
+      child: ScreenUtilInit(
+        designSize: Size(360, 690),
+        
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              fontFamily: 'HiMelody',
+              primarySwatch: Colors.blue,
+            ),
+            home: HomePage(),
+            routes: {
+              DiaryPage.routeName: (context) => const DiaryPage(),
+              DiaryWritePage.routeName: (context) => DiaryWritePage(),
+              GoalsPage.routeName: (context) => GoalsPage(),
+              GoalsWritePage.routeName: (context) => GoalsWritePage(),
+            }),
+      ),
     );
   }
 }

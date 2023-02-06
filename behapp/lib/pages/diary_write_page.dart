@@ -1,5 +1,4 @@
 import 'package:behapp/hivecustomobject/emotion_diary.dart';
-import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +28,13 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
   void initState() {
     _scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final arg = ModalRoute.of(context)?.settings.arguments as Writeargument;
-      _textEditingController1.text = arg.doc1 ?? '';
-      _textEditingController2.text = arg.doc2 ?? '';
-      _textEditingController3.text = arg.doc3 ?? '';
-      selectedEmotion = arg.emotion ?? Emotion.initial;
+      final todaydiarydata = context
+          .read<EmotionDiaryState>()
+          .diarydata[formatdatetoint(formatint.format(DateTime.now()))];
+      _textEditingController1.text = todaydiarydata?.docfirst ?? '';
+      _textEditingController2.text = todaydiarydata?.docsecond ?? '';
+      _textEditingController3.text = todaydiarydata?.docthird ?? '';
+      selectedEmotion = todaydiarydata?.emotion ?? Emotion.initial;
     });
     super.initState();
   }
@@ -49,10 +50,9 @@ class _DiaryWritePageState extends State<DiaryWritePage> {
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)?.settings.arguments as Writeargument;
-    final String date = format.format(arg.date);
-    final String day = formatw.format(arg.date);
-    final int dateindex = formatdatetoint(formatint.format(arg.date));
+    final String date = format.format(DateTime.now());
+    final String day = formatw.format(DateTime.now());
+    final int dateindex = formatdatetoint(formatint.format(DateTime.now()));
 
     return Material(
       child: GestureDetector(
