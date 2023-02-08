@@ -3,10 +3,11 @@ import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:behapp/utils/formatter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
+import 'today_todo_detail_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 
 class TodayPage extends StatefulWidget {
@@ -39,7 +40,6 @@ class _TodayPageState extends State<TodayPage> {
               child: DiaryWidget(),
             ),
             GoalWidget(),
-            ElevatedButton(onPressed: () {}, child: Text('a'))
           ],
         ),
       );
@@ -64,111 +64,77 @@ class _GoalWidgetState extends State<GoalWidget> {
         .dateprogressdata[formatdatetoint(formatint.format(DateTime.now()))];
     final Map<dynamic, TodoObject> tododata =
         context.watch<TodoState>().tododata;
-    return StatefulBuilder(builder: (context, setState) {
-      return Column(
-        children: [
-          Text('오늘의 할일'),
-          Container(
-            margin: const EdgeInsets.all(5),
-            height: 200.w,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.blueGrey,
-                )),
-            child: todaytodolist != null && todaytodolist.length != 0
-                ? ListView.separated(
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () async {
-                          return showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                child: Container(
-                                  height: 200.h,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20.w, vertical: 20.h),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      30,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${tododata[todaytodolist[index].id_todo]?.name}',
-                                      ),
-                                      tododata[todaytodolist[index].id_todo]!
-                                                  .todoType ==
-                                              TodoType.timer
-                                          ? Text(
-                                              'timer ${tododata[todaytodolist[index].id_todo]!.goaltime}')
-                                          : SizedBox(
-                                              height: 0,
-                                            ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          context
-                                              .read<DateProgressProvider>()
-                                              .completetodo(
-                                                  formatdatetoint(formatint
-                                                      .format(DateTime.now())),
-                                                  todaytodolist[index].id_todo);
-                                          setState(() {});
-                                        },
-                                        child: Text(
-                                          '완료',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.all(
-                            10,
-                          ),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                            width: 2,
-                            color: todaytodolist[index].completed
-                                ? Colors.red
-                                : Colors.black,
-                          )),
-                          child: Text(
-                            '${tododata[todaytodolist[index].id_todo]?.name}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 28,
-                            ),
+
+    return Column(
+      children: [
+        Text('오늘의 할일'),
+        Container(
+          margin: const EdgeInsets.all(5),
+          height: 200.w,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.blueGrey,
+              )),
+          child: todaytodolist != null && todaytodolist.length != 0
+              ? ListView.separated(
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () async {
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: TodayTodoWidget(
+                                goaltime:
+                                    tododata[todaytodolist[index].id_todo]!
+                                            .goaltime *
+                                        60,
+                                donetime: todaytodolist[index].done_time,
+                                id_todo: todaytodolist[index].id_todo,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(
+                          10,
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                          width: 2,
+                          color: todaytodolist[index].completed
+                              ? Colors.red
+                              : Colors.black,
+                        )),
+                        child: Text(
+                          '${tododata[todaytodolist[index].id_todo]?.name}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
                           ),
                         ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        height: 2,
-                        color: Colors.transparent,
-                      );
-                    },
-                    itemCount: todaytodolist.length)
-                : Text(
-                    '새로운 할일을 입력하세요',
-                    style: TextStyle(
-                      fontSize: 24,
-                    ),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      height: 2,
+                      color: Colors.transparent,
+                    );
+                  },
+                  itemCount: todaytodolist.length)
+              : Text(
+                  '새로운 할일을 입력하세요',
+                  style: TextStyle(
+                    fontSize: 24,
                   ),
-          ),
-        ],
-      );
-    });
+                ),
+        ),
+      ],
+    );
   }
 }
 

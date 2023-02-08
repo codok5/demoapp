@@ -202,7 +202,7 @@ class _GoalsPageState extends State<GoalsPage> {
                                                                               ),
                                                                               TextButton(
                                                                                 onPressed: (() {
-                                                                                  context.read<TodoProvider>().deletetodo(tododata[goallist[index].id_todo_list[indext]]!.id_todo);
+                                                                                  context.read<TodoProvider>().deletetodo(goallist[index].id_todo_list[indext]);
                                                                                   Navigator.pop(context);
                                                                                   Navigator.pop(context);
                                                                                 }),
@@ -238,13 +238,17 @@ class _GoalsPageState extends State<GoalsPage> {
                                                             color:
                                                                 Colors.blueGrey,
                                                           )),
-                                                      child: Text(
-                                                        ' ${tododata[goallist[index].id_todo_list[indext]]?.name}',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                        ),
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            ' ${tododata[goallist[index].id_todo_list[indext]]?.name}',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   );
@@ -261,15 +265,24 @@ class _GoalsPageState extends State<GoalsPage> {
                                       ),
                                       LinearPercentIndicator(
                                         percent: context
+                                                            .watch<GoalState>()
+                                                            .goalprogressdata[goallist[index].id_goal]![
+                                                        'presentprogress'] /
+                                                    context
+                                                            .watch<GoalState>()
+                                                            .goalprogressdata[goallist[index].id_goal]![
+                                                        'totalprogress'] >
+                                                1
+                                            ? 1
+                                            : context
+                                                        .watch<GoalState>()
+                                                        .goalprogressdata[goallist[index].id_goal]![
+                                                    'presentprogress'] /
+                                                context
                                                         .watch<GoalState>()
                                                         .goalprogressdata[
-                                                    goallist[index].id_goal]![
-                                                'presentprogress'] /
-                                            context
-                                                    .watch<GoalState>()
-                                                    .goalprogressdata[
-                                                goallist[index]
-                                                    .id_goal]!['totalprogress'],
+                                                    goallist[index]
+                                                        .id_goal]!['totalprogress'],
                                       ),
                                       Row(
                                         crossAxisAlignment:
@@ -294,9 +307,13 @@ class _GoalsPageState extends State<GoalsPage> {
                                                       ),
                                                       TextButton(
                                                         onPressed: (() {
+                                                          List<dynamic>
+                                                              deletekey = [
+                                                            ...goallist[index]
+                                                                .id_todo_list
+                                                          ];
                                                           for (var id_todo
-                                                              in goallist[index]
-                                                                  .id_todo_list) {
+                                                              in deletekey) {
                                                             context
                                                                 .read<
                                                                     TodoProvider>()
@@ -338,14 +355,6 @@ class _GoalsPageState extends State<GoalsPage> {
                                             },
                                             child: Text('매일의 할일 생성'),
                                           ),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                context
-                                                    .read<GoalProvider>()
-                                                    .addprogress(goallist[index]
-                                                        .id_goal);
-                                              },
-                                              child: Text('a'))
                                         ],
                                       ),
                                     ],
@@ -372,8 +381,8 @@ class _GoalsPageState extends State<GoalsPage> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          content: StatefulBuilder(
+        return Dialog(
+          child: StatefulBuilder(
             builder: (context, setState) {
               return Container(
                 padding: EdgeInsets.only(
@@ -433,9 +442,12 @@ class _GoalsPageState extends State<GoalsPage> {
                                 children: [
                                   Text(
                                     '하루 목표시간을 설정하세요',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                    ),
                                   ),
                                   SizedBox(
-                                    width: 15.w,
+                                    width: 15.sp,
                                   ),
                                   SizedBox(
                                     width: 50.w,
@@ -465,7 +477,7 @@ class _GoalsPageState extends State<GoalsPage> {
                                 ],
                               )
                             : SizedBox(
-                                width: 0,
+                                width: 0.w,
                               ),
                         ElevatedButton(
                           onPressed: (() {

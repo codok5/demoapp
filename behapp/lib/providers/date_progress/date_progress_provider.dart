@@ -1,4 +1,5 @@
 import 'package:behapp/hivecustomobject/today_todo_progress.dart';
+import 'package:behapp/utils/formatter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:state_notifier/state_notifier.dart';
@@ -41,17 +42,37 @@ class DateProgressProvider extends StateNotifier<DateProgressState>
     state = state.copyWith(dateprogressdata: newdateprogressdata);
   }
 
-  void completetodo(int date, String id_todo) {
+  void togglecompleted(int date, String id_todo) {
     Map<dynamic, List<dynamic>> newdateprogressdata = {
       ...state.dateprogressdata
     };
+
     for (var todaytodo in newdateprogressdata[date]!) {
       if (todaytodo.id_todo == id_todo) {
         todaytodo.completed = !todaytodo.completed;
         break;
       }
     }
+
     state = state.copyWith(dateprogressdata: newdateprogressdata);
     dateprogressdb.put(date, newdateprogressdata[date]!);
+  }
+
+  void changetodaydonetime(String id_todo, int done_time) {
+    Map<dynamic, List<dynamic>> newdateprogressdata = {
+      ...state.dateprogressdata
+    };
+    for (var todaytodo in newdateprogressdata[
+        formatdatetoint(formatint.format(DateTime.now()))]!) {
+      if (todaytodo.id_todo == id_todo) {
+        todaytodo.done_time = done_time;
+        break;
+      }
+    }
+    state = state.copyWith(dateprogressdata: newdateprogressdata);
+    dateprogressdb.put(
+        formatdatetoint(formatint.format(DateTime.now())),
+        newdateprogressdata[
+            formatdatetoint(formatint.format(DateTime.now()))]!);
   }
 }

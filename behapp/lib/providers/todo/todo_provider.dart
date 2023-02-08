@@ -55,8 +55,7 @@ class TodoProvider extends StateNotifier<TodoState> with LocatorMixin {
 
   void deletetodo(String id_todo) {
     final Map<dynamic, TodoObject> tododata = {...state.tododata};
-    read<GoalProvider>()
-        .deleteidtodo(tododata[id_todo]!.id_goal, id_todo);
+    read<GoalProvider>().deleteidtodo(tododata[id_todo]!.id_goal, id_todo);
     tododata.remove(id_todo);
     state = state.copyWith(tododata: tododata);
     tododb.delete(id_todo);

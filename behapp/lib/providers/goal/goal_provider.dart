@@ -90,7 +90,6 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
                   ? GoalProgressStatus.inprogress
                   : GoalProgressStatus.start,
     };
-
     GoalObject? addedgoal = goaldb.get(id_goal);
     addedgoal!.presentprogress = addedgoal.presentprogress + 1;
     Map<dynamic, GoalObject> newgoaldata = state.goaldata;
@@ -102,6 +101,36 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
     goaldb.put(id_goal, addedgoal);
   }
 
+  void deleteprogress(String id_goal) {
+    final Map<dynamic, Map<String, dynamic>> progressmap = {
+      ...state.goalprogressdata,
+    };
+    progressmap[id_goal] = {
+      'totalprogress': state.goalprogressdata[id_goal]!['totalprogress'],
+      'presentprogress':
+          state.goalprogressdata[id_goal]!['presentprogress'] - 1,
+      'progressstatus':
+          (state.goalprogressdata[id_goal]!['presentprogress'] - 1) /
+                      state.goalprogressdata[id_goal]!['totalprogress'] >=
+                  1
+              ? GoalProgressStatus.completed
+              : (state.goalprogressdata[id_goal]!['presentprogress'] - 1) /
+                          state.goalprogressdata[id_goal]!['totalprogress'] >
+                      0
+                  ? GoalProgressStatus.inprogress
+                  : GoalProgressStatus.start,
+    };
+    GoalObject? deletedgoal = goaldb.get(id_goal);
+    deletedgoal!.presentprogress = deletedgoal.presentprogress - 1;
+    Map<dynamic, GoalObject> newgoaldata = state.goaldata;
+    newgoaldata[id_goal] = deletedgoal;
+    state = state.copyWith(
+      goaldata: newgoaldata,
+      goalprogressdata: progressmap,
+    );
+    goaldb.put(id_goal, deletedgoal);
+  }
+
   void addidtodo(String id_goal, String id_todo) {
     Map<dynamic, GoalObject> goaldata = {...state.goaldata};
     goaldata[id_goal]!.id_todo_list.add(id_todo);
@@ -110,7 +139,6 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
   }
 
   void deleteidtodo(String id_goal, String id_todo) {
-    print('a');
     Map<dynamic, GoalObject> goaldata = {...state.goaldata};
     goaldata[id_goal]!.id_todo_list.remove(id_todo);
     state = state.copyWith(goaldata: goaldata);
