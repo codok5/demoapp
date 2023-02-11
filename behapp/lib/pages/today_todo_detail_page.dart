@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
+import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,14 +19,35 @@ class TodayTodoWidget extends StatefulWidget {
   State<TodayTodoWidget> createState() => _TodayTodoWidgetState();
 }
 
-class _TodayTodoWidgetState extends State<TodayTodoWidget> {
+class _TodayTodoWidgetState extends State<TodayTodoWidget>
+    with WidgetsBindingObserver {
   late int runtime;
   late Timer timer;
   bool isrun = false;
   @override
   void initState() {
     runtime = widget.donetime;
+    timer = Timer(Duration(), () {});
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        pausetimer();
+        break;
+      default:
+        break;
+    }
   }
 
   void addTime(Timer timer) {
@@ -51,20 +73,26 @@ class _TodayTodoWidgetState extends State<TodayTodoWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(children: [
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${runtime}',
+              '${inttominute(runtime)}',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 40,
               ),
             ),
-            Text('/'),
             Text(
-              '${widget.goaltime}',
+              '/',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 50,
+              ),
+            ),
+            Text(
+              '${inttominute(widget.goaltime)}',
+              style: TextStyle(
+                fontSize: 40,
               ),
             ),
           ],

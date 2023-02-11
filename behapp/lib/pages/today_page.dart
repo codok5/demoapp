@@ -1,5 +1,6 @@
 import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/pages/diary_page.dart';
+import 'package:behapp/pages/game_page.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:behapp/utils/formatter.dart';

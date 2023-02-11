@@ -1,5 +1,6 @@
 import 'package:behapp/pages/calendar_page.dart';
 import 'package:behapp/pages/diary_page.dart';
+import 'package:behapp/pages/game_setting_page.dart';
 import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/pages/today_page.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 2;
 
   final List<Widget> _widgetlist = <Widget>[
+    GameSettingPage(),
     CalendarPage(),
     TodayPage(),
     DiaryPage(),
@@ -30,13 +32,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _widgetlist[_selectedIndex],
-      ),
+      body: _widgetlist[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.blueGrey,
         items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.gamepad_outlined), label: 'Game'),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month), label: 'Calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Today'),

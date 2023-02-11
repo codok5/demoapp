@@ -44,6 +44,7 @@ class _GoalsPageState extends State<GoalsPage> {
 
     return Material(
       child: Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.3),
         floatingActionButton: ElevatedButton(
           child: Text(
             '목표 생성',
@@ -79,22 +80,25 @@ class _GoalsPageState extends State<GoalsPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        IconButton(
-                          iconSize: 100,
-                          onPressed: () {
+                        GestureDetector(
+                          onTap: () {
                             setState(() {
                               goalselected[index] = !goalselected[index];
                             });
                           },
-                          icon: ImageIcon(progressdata[keylist_goal[index]]![
-                                      'progressstatus'] ==
-                                  GoalProgressStatus.start
-                              ? AssetImage('assets/images/before.png')
-                              : progressdata[keylist_goal[index]]![
-                                          'progressstatus'] ==
-                                      GoalProgressStatus.inprogress
-                                  ? AssetImage('assets/images/inprogress.png')
-                                  : AssetImage('assets/images/completed1.png')),
+                          child: Image(
+                            image: progressdata[keylist_goal[index]]![
+                                        'progressstatus'] ==
+                                    GoalProgressStatus.start
+                                ? AssetImage('assets/images/before.png')
+                                : progressdata[keylist_goal[index]]![
+                                            'progressstatus'] ==
+                                        GoalProgressStatus.inprogress
+                                    ? AssetImage('assets/images/inprogress.png')
+                                    : AssetImage('assets/images/bear.gif'),
+                            width: 100,
+                            height: 100,
+                          ),
                         ),
                         goalselected[index]
                             ? Container(
@@ -355,6 +359,14 @@ class _GoalsPageState extends State<GoalsPage> {
                                             },
                                             child: Text('매일의 할일 생성'),
                                           ),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<GoalProvider>()
+                                                    .addprogress(goallist[index]
+                                                        .id_goal);
+                                              },
+                                              child: Text('a'))
                                         ],
                                       ),
                                     ],

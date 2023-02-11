@@ -1,16 +1,19 @@
 import 'package:behapp/firebase_options.dart';
 import 'package:behapp/hivecustomobject/emotion_diary.dart';
+import 'package:behapp/hivecustomobject/game_setting.dart';
 import 'package:behapp/hivecustomobject/goal.dart';
 import 'package:behapp/hivecustomobject/today_todo_progress.dart';
 import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/library/local_notification.dart';
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/diary_write_page.dart';
+import 'package:behapp/pages/game_page.dart';
 import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
+// import 'package:behapp/providers/game_setting/game_setting_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
 
 import 'package:behapp/providers/todo/todo_provider.dart';
@@ -33,15 +36,18 @@ void main() async {
   Hive.registerAdapter(TodoTypeAdapter());
   Hive.registerAdapter(TodoObjectAdapter());
   Hive.registerAdapter(TodayTodoProgressObjectAdapter());
+  Hive.registerAdapter(GameSettingObjectAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
   await Hive.openBox<TodoObject>('todo');
   await Hive.openBox<List<dynamic>>('todoprogress');
+  await Hive.openBox<GameSettingObject>('gamesetting');
   await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -64,6 +70,9 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return MultiProvider(
       providers: [
+        // StateNotifierProvider<GameSettingProvider, GameSettingState>(
+        //   create: (context) => GameSettingProvider(),
+        // ),
         StateNotifierProvider<EmotionDiaryProvider, EmotionDiaryState>(
           create: (context) => EmotionDiaryProvider(),
         ),
@@ -87,21 +96,13 @@ class _MyAppState extends State<MyApp> {
               fontFamily: 'HiMelody',
               primarySwatch: Colors.blueGrey,
             ),
-            home: Container(
-              color: Colors.white,
-              child: SafeArea(
-                top: true,
-                bottom: false,
-                child: Scaffold(
-                  body: HomePage(),
-                ),
-              ),
-            ),
+            home: HomePage(),
             routes: {
               DiaryPage.routeName: (context) => const DiaryPage(),
               DiaryWritePage.routeName: (context) => DiaryWritePage(),
               GoalsPage.routeName: (context) => GoalsPage(),
               GoalsWritePage.routeName: (context) => GoalsWritePage(),
+              GamePage.routeName: (context) => GamePage(),
             }),
       ),
     );

@@ -21,7 +21,6 @@ class EmotionDiaryState extends Equatable {
   @override
   String toString() => 'EmotionDiaryState(diarydata: $diarydata)';
 
-  
 
   EmotionDiaryState copyWith({
     Map<dynamic, EmotionDiaryObject>? diarydata,
