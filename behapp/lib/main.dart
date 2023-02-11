@@ -13,6 +13,7 @@ import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
+import 'package:behapp/providers/game_setting/game_setting_provider.dart';
 // import 'package:behapp/providers/game_setting/game_setting_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
 
@@ -70,9 +71,9 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return MultiProvider(
       providers: [
-        // StateNotifierProvider<GameSettingProvider, GameSettingState>(
-        //   create: (context) => GameSettingProvider(),
-        // ),
+        StateNotifierProvider<GameSettingProvider, GameSettingState>(
+          create: (context) => GameSettingProvider(),
+        ),
         StateNotifierProvider<EmotionDiaryProvider, EmotionDiaryState>(
           create: (context) => EmotionDiaryProvider(),
         ),

@@ -1,4 +1,5 @@
 import 'package:behapp/components/world_collidable.dart';
+import 'package:behapp/providers/game_setting/game_setting_provider.dart';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -14,6 +15,7 @@ enum Direction {
 
 class Player extends SpriteAnimationComponent
     with HasGameRef, CollisionCallbacks {
+  final GameSettingProvider gameSettingProvider;
   Direction direction = Direction.none;
   final double _playerSpeed = 150.0;
 
@@ -27,12 +29,7 @@ class Player extends SpriteAnimationComponent
   Direction _collisionDirection = Direction.none;
   bool _hasCollided = false;
 
-  Player()
-      : super(
-          size: Vector2.all(50.0),
-        ) {
-    add(RectangleHitbox());
-  }
+  Player(this.gameSettingProvider);
 
   @override
   Future<void> onLoad() async {

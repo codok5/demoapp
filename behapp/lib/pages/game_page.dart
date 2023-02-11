@@ -1,8 +1,9 @@
 import 'package:behapp/flame/gameworld.dart';
+import 'package:behapp/providers/game_setting/game_setting_provider.dart';
 import 'package:behapp/utils/joypad.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -13,10 +14,10 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  final game = GameWorld();
   @override
   Widget build(BuildContext context) {
-    
+    final game =
+        GameWorld(gameSettingProvider: context.read<GameSettingProvider>());
     return Scaffold(
       body: Stack(
         children: [
