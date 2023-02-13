@@ -7,7 +7,6 @@ import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/library/local_notification.dart';
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/diary_write_page.dart';
-import 'package:behapp/pages/game_page.dart';
 import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
@@ -25,6 +24,7 @@ import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -90,19 +90,31 @@ class _MyAppState extends State<MyApp> {
         designSize: Size(360, 690),
         minTextAdapt: true,
         builder: (context, child) => MaterialApp(
+            builder: (context, child) => ResponsiveWrapper.builder(
+                  BouncingScrollWrapper.builder(context, child!),
+                  maxWidth: 1200,
+                  minWidth: 450,
+                  defaultScale: true,
+                  breakpoints: [
+                    const ResponsiveBreakpoint.resize(450, name: MOBILE),
+                    const ResponsiveBreakpoint.autoScale(800, name: TABLET),
+                    const ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+                    const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+                    const ResponsiveBreakpoint.autoScale(2460, name: "4K"),
+                  ],
+                ),
             debugShowCheckedModeBanner: false,
+            home: HomePage(),
             title: 'Flutter Demo',
             theme: ThemeData(
               fontFamily: 'HiMelody',
               primarySwatch: Colors.blueGrey,
             ),
-            home: HomePage(),
             routes: {
               DiaryPage.routeName: (context) => const DiaryPage(),
               DiaryWritePage.routeName: (context) => DiaryWritePage(),
               GoalsPage.routeName: (context) => GoalsPage(),
               GoalsWritePage.routeName: (context) => GoalsWritePage(),
-              GamePage.routeName: (context) => GamePage(),
             }),
       ),
     );

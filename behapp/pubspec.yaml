@@ -56,6 +56,9 @@ dependencies:
   firebase_storage: ^11.0.10
   flame: ^1.6.0
   flame_bloc: ^1.8.2
+  responsive_framework: ^0.2.0
+  flutter_bloc: ^8.1.2
+  bloc: ^8.1.1
 
 dev_dependencies:
   flutter_test:

@@ -1,13 +1,14 @@
 import 'package:behapp/pages/calendar_page.dart';
 import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/pages/game_setting_page.dart';
+
 import 'package:behapp/pages/goals_page.dart';
 import 'package:behapp/pages/today_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
+  static const routeName = '/';
   @override
   State<HomePage> createState() => _HomePageState();
 }
