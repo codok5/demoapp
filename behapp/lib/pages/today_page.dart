@@ -1,3 +1,5 @@
+import 'package:behapp/Game/repository/repository.dart';
+import 'package:behapp/hivecustomobject/item.dart';
 import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/pages/diary_page.dart';
 
@@ -41,6 +43,34 @@ class _TodayPageState extends State<TodayPage> {
               child: DiaryWidget(),
             ),
             GoalWidget(),
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      iteminvetorydb.put('iteminventory', [
+                        ...iteminvetorydb.get('iteminventory') ?? [],
+                        Item.sword1
+                      ]);
+                    },
+                    child: Text('sword1')),
+                ElevatedButton(
+                    onPressed: () {
+                      iteminvetorydb.put('iteminventory', [
+                        ...iteminvetorydb.get('iteminventory') ?? [],
+                        Item.sword2
+                      ]);
+                    },
+                    child: Text('sword2')),
+                ElevatedButton(
+                    onPressed: () {
+                      iteminvetorydb.put('iteminventory', [
+                        ...iteminvetorydb.get('iteminventory') ?? [],
+                        Item.hat
+                      ]);
+                    },
+                    child: Text('hat')),
+              ],
+            )
           ],
         ),
       );

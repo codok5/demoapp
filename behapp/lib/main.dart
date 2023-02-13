@@ -1,7 +1,8 @@
 import 'package:behapp/firebase_options.dart';
 import 'package:behapp/hivecustomobject/emotion_diary.dart';
-import 'package:behapp/hivecustomobject/game_setting.dart';
+
 import 'package:behapp/hivecustomobject/goal.dart';
+import 'package:behapp/hivecustomobject/item.dart';
 import 'package:behapp/hivecustomobject/today_todo_progress.dart';
 import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/library/local_notification.dart';
@@ -12,7 +13,7 @@ import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/pages/home_page.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
-// import 'package:behapp/providers/game_setting/game_setting_provider.dart';
+
 import 'package:behapp/providers/goal/goal_provider.dart';
 
 import 'package:behapp/providers/todo/todo_provider.dart';
@@ -36,12 +37,12 @@ void main() async {
   Hive.registerAdapter(TodoTypeAdapter());
   Hive.registerAdapter(TodoObjectAdapter());
   Hive.registerAdapter(TodayTodoProgressObjectAdapter());
-  Hive.registerAdapter(GameSettingObjectAdapter());
+  Hive.registerAdapter(ItemAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
   await Hive.openBox<TodoObject>('todo');
   await Hive.openBox<List<dynamic>>('todoprogress');
-  await Hive.openBox<GameSettingObject>('gamesetting');
+  await Hive.openBox<List<dynamic>>('gamesetting');
   await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

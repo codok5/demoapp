@@ -1,4 +1,5 @@
 import 'package:behapp/Game/model/Item.dart';
+import 'package:behapp/hivecustomobject/item.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 

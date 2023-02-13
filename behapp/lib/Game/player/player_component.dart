@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:behapp/hivecustomobject/item.dart';
 import 'package:flame/components.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 
@@ -42,8 +43,26 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
 
   @override
   void update(double dt) {
-    position.add(gameRef.joystick.delta * 3 * dt);
+    position.add(getdirection(gameRef.joystick.delta) * 100 * dt);
     super.update(dt);
+  }
+
+  Vector2 getdirection(Vector2 delta) {
+    if (delta == Vector2(0, 0)) {
+      return Vector2(0, 0);
+    } else if (delta[0].abs() > delta[1].abs()) {
+      if (delta[0] > 0) {
+        return Vector2(1, 0);
+      } else {
+        return Vector2(-1, 0);
+      }
+    } else {
+      if (delta[1] > 0) {
+        return Vector2(0, 1);
+      } else {
+        return Vector2(0, -1);
+      }
+    }
   }
 }
 

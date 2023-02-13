@@ -1,3 +1,5 @@
+import 'package:behapp/hivecustomobject/item.dart';
+
 enum Slot {
   head,
   righthand,
@@ -7,11 +9,7 @@ enum Slot {
   shoe,
 }
 
-enum Item {
-  sword1,
-  sword2,
-  hat,
-}
+
 
 extension ItemSlot on Item {
   Slot get slots {

@@ -3,6 +3,7 @@ import 'package:behapp/Game/background/bloc/background_bloc.dart';
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
 
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
+import 'package:behapp/Game/repository/repository.dart';
 
 import 'package:behapp/Game/view/wackygame_view.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class WackyGamePage extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider<InventoryBloc>(
-              create: (context) => InventoryBloc(),
+              create: (context) => InventoryBloc(repository: Repository()),
             ),
             BlocProvider<PlayerBloc>(
               create: (context) => PlayerBloc(),
