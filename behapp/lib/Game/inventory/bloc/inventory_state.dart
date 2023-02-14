@@ -10,7 +10,7 @@ class InventoryState extends Equatable {
 
   final List<dynamic> items; // hive 오류로 인함. List<Item>이 맞음
 
-  InventoryState.initial() : this(items: Repository.getItemInventory());
+  InventoryState.initial() : this(items: Repository.getItemInventory().toList());
 
   InventoryState copyWith({
     List<dynamic>? items,

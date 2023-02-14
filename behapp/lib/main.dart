@@ -42,7 +42,7 @@ void main() async {
   await Hive.openBox<GoalObject>('goal');
   await Hive.openBox<TodoObject>('todo');
   await Hive.openBox<List<dynamic>>('todoprogress');
-  await Hive.openBox<List<dynamic>>('gamesetting');
+  await Hive.openBox<dynamic>('gamesetting');
   await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

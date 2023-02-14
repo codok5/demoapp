@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
+import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,11 +10,13 @@ class TodayTodoWidget extends StatefulWidget {
   final int goaltime;
   final int donetime;
   final String id_todo;
+  final int index;
   const TodayTodoWidget({
     Key? key,
     required this.goaltime,
     required this.donetime,
     required this.id_todo,
+    required this.index,
   }) : super(key: key);
   @override
   State<TodayTodoWidget> createState() => _TodayTodoWidgetState();
@@ -105,14 +108,35 @@ class _TodayTodoWidgetState extends State<TodayTodoWidget>
         ),
         ElevatedButton(
           onPressed: () {
-            context
-                .read<DateProgressProvider>()
-                .changetodaydonetime(widget.id_todo, runtime);
+            setState(() {
+              context
+                  .read<DateProgressProvider>()
+                  .changetodaydonetime(widget.id_todo, runtime);
+            });
           },
           child: Text(
             '시간 저장',
           ),
         ),
+        context.watch<TodoState>().tododata[widget.id_todo]!.goaltime * 60 <=
+                runtime
+            ? ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    context.read<DateProgressProvider>().togglecompleted(
+                        formatdatetoint(formatint.format(DateTime.now())),
+                        widget.id_todo);
+                    context
+                        .read<DateProgressProvider>()
+                        .changetodaydonetime(widget.id_todo, runtime);
+                    Navigator.pop(context,true);
+                  });
+                },
+                child: Text('완료'),
+              )
+            : SizedBox(
+                height: 0,
+              ),
       ]),
     );
   }

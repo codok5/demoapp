@@ -1,5 +1,3 @@
-import 'package:behapp/Game/repository/repository.dart';
-import 'package:behapp/hivecustomobject/item.dart';
 import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/pages/diary_page.dart';
 
@@ -25,53 +23,27 @@ class _TodayPageState extends State<TodayPage> {
   Widget build(BuildContext context) {
     return Builder(builder: (BuildContext context) {
       return Scaffold(
-        body: Column(
-          children: [
-            SizedBox(
-              height: 60.w,
-            ),
-            SizedBox(
-              height: 20.w,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  DiaryPage.routeName,
-                );
-              },
-              child: DiaryWidget(),
-            ),
-            GoalWidget(),
-            Row(
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      iteminvetorydb.put('iteminventory', [
-                        ...iteminvetorydb.get('iteminventory') ?? [],
-                        Item.sword1
-                      ]);
-                    },
-                    child: Text('sword1')),
-                ElevatedButton(
-                    onPressed: () {
-                      iteminvetorydb.put('iteminventory', [
-                        ...iteminvetorydb.get('iteminventory') ?? [],
-                        Item.sword2
-                      ]);
-                    },
-                    child: Text('sword2')),
-                ElevatedButton(
-                    onPressed: () {
-                      iteminvetorydb.put('iteminventory', [
-                        ...iteminvetorydb.get('iteminventory') ?? [],
-                        Item.hat
-                      ]);
-                    },
-                    child: Text('hat')),
-              ],
-            )
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 60.w,
+              ),
+              SizedBox(
+                height: 20.w,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    DiaryPage.routeName,
+                  );
+                },
+                child: DiaryWidget(),
+              ),
+              GoalWidget(),
+            ],
+          ),
         ),
       );
     });
@@ -101,7 +73,7 @@ class _GoalWidgetState extends State<GoalWidget> {
         Text('오늘의 할일'),
         Container(
           margin: const EdgeInsets.all(5),
-          height: 200.w,
+          height: 200.h,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -113,7 +85,7 @@ class _GoalWidgetState extends State<GoalWidget> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () async {
-                        return showDialog(
+                        bool? completed = await showDialog(
                           context: context,
                           builder: (context) {
                             return Dialog(
@@ -124,29 +96,37 @@ class _GoalWidgetState extends State<GoalWidget> {
                                         60,
                                 donetime: todaytodolist[index].done_time,
                                 id_todo: todaytodolist[index].id_todo,
+                                index: index,
                               ),
                             );
                           },
                         );
+                        if (completed == true) {
+                          setState(() {});
+                        }
                       },
-                      child: Container(
-                        margin: EdgeInsets.all(
-                          10,
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                          width: 2,
-                          color: todaytodolist[index].completed
-                              ? Colors.red
-                              : Colors.black,
-                        )),
-                        child: Text(
-                          '${tododata[todaytodolist[index].id_todo]?.name}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 28,
-                          ),
-                        ),
+                      child: Consumer<DateProgressProvider>(
+                        builder: (context, value, child) {
+                          return Container(
+                            margin: EdgeInsets.all(
+                              10,
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                              width: 2,
+                              color: todaytodolist[index].completed
+                                  ? Colors.red
+                                  : Colors.black,
+                            )),
+                            child: Text(
+                              '${tododata[todaytodolist[index].id_todo]?.name}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 28,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },

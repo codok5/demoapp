@@ -62,6 +62,7 @@ class DateProgressProvider extends StateNotifier<DateProgressState>
     Map<dynamic, List<dynamic>> newdateprogressdata = {
       ...state.dateprogressdata
     };
+
     for (var todaytodo in newdateprogressdata[
         formatdatetoint(formatint.format(DateTime.now()))]!) {
       if (todaytodo.id_todo == id_todo) {
