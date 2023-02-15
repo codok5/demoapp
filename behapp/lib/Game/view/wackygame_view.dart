@@ -1,9 +1,11 @@
 import 'package:behapp/Game/background/bloc/background_bloc.dart';
+import 'package:behapp/Game/characterlist/view/characterlist_view.dart';
 
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
 import 'package:behapp/Game/inventory/view/inventory_view.dart';
 
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
+import 'package:behapp/Game/repository/repository.dart';
 
 import 'package:behapp/Game/wackygame.dart';
 import 'package:flame/game.dart';
@@ -12,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class WackyGameView extends StatelessWidget {
-  const WackyGameView({super.key});
+  WackyGameView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,33 +26,49 @@ class WackyGameView extends StatelessWidget {
           appBar: AppBar(
             toolbarHeight: 35.h,
             backgroundColor: Colors.black,
-            leading: IconButton(
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-                size: 30.w,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                
-              },
+            leading: Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.exit_to_app,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Repository.SaveSetting(
+                        gear: context.read<PlayerBloc>().state.gear,
+                        character: context.read<PlayerBloc>().state.character);
+                  },
+                ),
+              ],
             ),
           ),
-          body: Column(
+          body: Stack(
             children: [
-              Expanded(
-                child: GameWidget(
-                  game: WackyGame(
-                    playerBloc: context.read<PlayerBloc>(),
-                    inventoryBloc: context.read<InventoryBloc>(),
-                    backgroundBloc: context.read<BackgroundBloc>(),
-                  ),
+              GameWidget(
+                game: WackyGame(
+                  playerBloc: context.read<PlayerBloc>(),
+                  inventoryBloc: context.read<InventoryBloc>(),
+                  backgroundBloc: context.read<BackgroundBloc>(),
                 ),
               ),
-              SizedBox(
-                height: 150.h,
-                width: double.infinity,
-                child: InventoryView(),
+              Positioned(
+                top: 90.h,
+                left: 10.w,
+                child: SizedBox(
+                  height: 30.h,
+                  width: MediaQuery.of(context).size.width,
+                  child: CharacterListView(),
+                ),
+              ),
+              Positioned(
+                top: 60.h,
+                left: 10.w,
+                child: SizedBox(
+                  height: 30.h,
+                  width: MediaQuery.of(context).size.width,
+                  child: InventoryView(),
+                ),
               )
             ],
           )),

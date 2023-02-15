@@ -8,12 +8,12 @@ class InventoryState extends Equatable {
   @override
   List<Object> get props => [items];
 
-  final List<dynamic> items; // hive 오류로 인함. List<Item>이 맞음
+  final List<Item> items;
 
-  InventoryState.initial() : this(items: Repository.getItemInventory().toList());
+  InventoryState.initial() : this(items: Repository.GetItemInventory());
 
   InventoryState copyWith({
-    List<dynamic>? items,
+    List<Item>? items,
   }) {
     return InventoryState(
       items: items ?? this.items,

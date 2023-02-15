@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/emotion_diary.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';

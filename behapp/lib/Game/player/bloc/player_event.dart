@@ -17,3 +17,13 @@ class ItemSelected extends PlayerEvent {
   @override
   List<Object> get props => [item];
 }
+
+class CharacterSelected extends PlayerEvent {
+  final Character character;
+  CharacterSelected({
+    required this.character,
+  });
+
+  @override
+  List<Object> get props => [character];
+}

@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
 import 'package:behapp/providers/todo/todo_provider.dart';
@@ -52,10 +52,10 @@ class _CalendarPageState extends State<CalendarPage> {
             SizedBox(
               height: 100,
             ),
-            DiaryWidget(
+            DiaryWidgetCalendar(
               selectedDay: _selectedDay,
             ),
-            GoalWidget(
+            GoalWidgetCalendar(
               selectedDay: _selectedDay,
             ),
           ],
@@ -65,9 +65,9 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 }
 
-class GoalWidget extends StatelessWidget {
+class GoalWidgetCalendar extends StatelessWidget {
   final DateTime selectedDay;
-  const GoalWidget({
+  const GoalWidgetCalendar({
     required this.selectedDay,
     Key? key,
   }) : super(key: key);
@@ -128,9 +128,9 @@ class GoalWidget extends StatelessWidget {
   }
 }
 
-class DiaryWidget extends StatelessWidget {
+class DiaryWidgetCalendar extends StatelessWidget {
   final DateTime selectedDay;
-  const DiaryWidget({
+  const DiaryWidgetCalendar({
     required this.selectedDay,
     Key? key,
   }) : super(key: key);

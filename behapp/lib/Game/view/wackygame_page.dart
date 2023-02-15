@@ -1,9 +1,9 @@
 import 'package:behapp/Game/background/bloc/background_bloc.dart';
+import 'package:behapp/Game/characterlist/bloc/characterlist_bloc.dart';
 
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
 
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
-import 'package:behapp/Game/repository/repository.dart';
 
 import 'package:behapp/Game/view/wackygame_view.dart';
 import 'package:flutter/material.dart';
@@ -11,23 +11,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class WackyGamePage extends StatelessWidget {
   const WackyGamePage({super.key});
-  
+
   static Route<void> route() {
     return MaterialPageRoute(
       builder: (context) {
         return MultiBlocProvider(
           providers: [
             BlocProvider<InventoryBloc>(
-              create: (context) => InventoryBloc(repository: Repository()),
+              create: (context) => InventoryBloc(),
+              lazy: false,
             ),
             BlocProvider<PlayerBloc>(
               create: (context) => PlayerBloc(),
+              lazy: false,
             ),
             BlocProvider<BackgroundBloc>(
               create: (context) => BackgroundBloc(),
+              lazy: false,
             ),
+            BlocProvider<CharacterlistBloc>(
+              create: (context) => CharacterlistBloc(),
+              lazy: false,
+            )
           ],
-          child: WackyGamePage(),
+          child: Builder(builder: (context) {
+            return WackyGamePage();
+          }),
         );
       },
     );
@@ -35,6 +44,8 @@ class WackyGamePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WackyGameView();
+    return Builder(builder: (context) {
+      return WackyGameView();
+    });
   }
 }

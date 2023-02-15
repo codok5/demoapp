@@ -1,13 +1,5 @@
-import 'package:behapp/hivecustomobject/item.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 
-enum Slot {
-  head,
-  righthand,
-  lefthand,
-  top,
-  pants,
-  shoe,
-}
 
 
 

@@ -1,22 +1,8 @@
 import 'package:behapp/firebase_options.dart';
-import 'package:behapp/hivecustomobject/emotion_diary.dart';
-
-import 'package:behapp/hivecustomobject/goal.dart';
-import 'package:behapp/hivecustomobject/item.dart';
-import 'package:behapp/hivecustomobject/today_todo_progress.dart';
-import 'package:behapp/hivecustomobject/todo.dart';
 import 'package:behapp/library/local_notification.dart';
-import 'package:behapp/pages/diary_page.dart';
-import 'package:behapp/pages/diary_write_page.dart';
-import 'package:behapp/pages/goals_page.dart';
-import 'package:behapp/pages/goals_write_page.dart';
-import 'package:behapp/pages/home_page.dart';
-import 'package:behapp/providers/date_progress/date_progress_provider.dart';
-import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
-
-import 'package:behapp/providers/goal/goal_provider.dart';
-
-import 'package:behapp/providers/todo/todo_provider.dart';
+import 'pages/page.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
+import 'providers/customprovider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +24,7 @@ void main() async {
   Hive.registerAdapter(TodoObjectAdapter());
   Hive.registerAdapter(TodayTodoProgressObjectAdapter());
   Hive.registerAdapter(ItemAdapter());
+  Hive.registerAdapter(CharacterAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
   await Hive.openBox<TodoObject>('todo');

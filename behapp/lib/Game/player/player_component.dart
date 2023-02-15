@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:behapp/hivecustomobject/item.dart';
+import 'package:behapp/Game/repository/repository.dart';
 import 'package:flame/components.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 
 import 'package:behapp/Game/model/Item.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/wackygame.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 
 class Player extends PositionComponent with HasGameRef<WackyGame> {
   late final PositionComponent runAnimation;
@@ -20,15 +21,23 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
 
     anchor = Anchor.center;
 
+    add(PlayerCharacter(
+        character: Repository.GetLatestCharacter() ?? Character.ailen));
+
     await add(
-        FlameBlocListener<PlayerBloc, PlayerState>(onNewState: _onNewState));
-    final idle = await gameRef.loadSprite('ailen.png');
-    idleAnimation =
-        SpriteComponent(sprite: idle, size: size, position: Vector2(50, 50));
-    add(idleAnimation);
+      FlameBlocListener<PlayerBloc, PlayerState>(
+          listenWhen: (previousState, newState) =>
+              newState.gear != previousState.gear,
+          onNewState: _onNewGearState),
+    );
+
+    await add(FlameBlocListener<PlayerBloc, PlayerState>(
+        listenWhen: (previousState, newState) =>
+            newState.character != previousState.character,
+        onNewState: _onNewCharacterState));
   }
 
-  void _onNewState(PlayerState state) {
+  void _onNewGearState(PlayerState state) {
     for (final child in children.whereType<PlayerGear>()) {
       child.removeFromParent();
     }
@@ -39,6 +48,14 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
         add(PlayerGear(slot: item.slots, item: item));
       } else {}
     }
+  }
+
+  void _onNewCharacterState(PlayerState state) async {
+    for (final child in children.whereType<PlayerCharacter>()) {
+      child.removeFromParent();
+    }
+    final Character character = state.character;
+    add(PlayerCharacter(character: character));
   }
 
   @override
@@ -63,6 +80,21 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
         return Vector2(0, -1);
       }
     }
+  }
+}
+
+class PlayerCharacter extends SpriteComponent with HasGameRef<WackyGame> {
+  final Character character;
+  PlayerCharacter({
+    required this.character,
+  });
+  @override
+  FutureOr<void> onLoad() async {
+    await super.onLoad();
+    sprite = await gameRef.loadSprite('${character.name}.png');
+    anchor = Anchor.center;
+    position = Vector2(80, 100);
+    size = Vector2(60, 100);
   }
 }
 

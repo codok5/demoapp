@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/hiveCustomModel/todo.dart';
 import 'package:behapp/pages/diary_page.dart';
 
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';

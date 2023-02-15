@@ -1,5 +1,4 @@
-import 'package:behapp/hivecustomobject/goal.dart';
-import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:behapp/pages/goals_write_page.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
 import 'package:behapp/providers/todo/todo_provider.dart';

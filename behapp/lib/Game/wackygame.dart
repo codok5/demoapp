@@ -5,6 +5,7 @@ import 'package:behapp/Game/background/bloc/background_bloc.dart';
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/player/player_component.dart';
+import 'package:behapp/Game/repository/repository.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
@@ -40,8 +41,8 @@ class WackyGame extends FlameGame with HasCollisionDetection, HasDraggables {
         player = Player()..y = 300,
       ]),
     );
-    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+    final knobPaint = BasicPalette.white.withAlpha(200).paint();
+    final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
     joystick = JoystickComponent(
       knob: CircleComponent(radius: 20, paint: knobPaint),
       background: CircleComponent(radius: 50, paint: backgroundPaint),

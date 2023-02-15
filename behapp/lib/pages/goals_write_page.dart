@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/goal.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:flutter/material.dart';

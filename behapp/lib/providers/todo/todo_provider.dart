@@ -1,6 +1,4 @@
-import 'package:behapp/hivecustomobject/goal.dart';
-import 'package:behapp/hivecustomobject/today_todo_progress.dart';
-import 'package:behapp/hivecustomobject/todo.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/goal/goal_provider.dart';
 

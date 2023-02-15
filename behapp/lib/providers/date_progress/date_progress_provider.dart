@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/today_todo_progress.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:behapp/utils/formatter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';

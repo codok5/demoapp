@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/goal.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:hive/hive.dart';

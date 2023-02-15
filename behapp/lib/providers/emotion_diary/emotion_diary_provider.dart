@@ -1,4 +1,4 @@
-import 'package:behapp/hivecustomobject/emotion_diary.dart';
+import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:state_notifier/state_notifier.dart';
