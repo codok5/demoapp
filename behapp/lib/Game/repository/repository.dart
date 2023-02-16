@@ -20,14 +20,30 @@ class Repository {
     gamesettingdb.put('iteminventory', newiteminventory);
   }
 
-  static Map<String, Item>? GetEquipedGear() {
-    final Map<String, Item>? equipedGear =
-        gamesettingdb.get('latestsetting')?['gear'];
-    return equipedGear;
+  static Map<Slot, Item?> GetEquipedGear() {
+    if (gamesettingdb.get('latestsetting') != null) {
+      return {
+        Slot.head: gamesettingdb.get('latestsetting')['head'],
+        Slot.lefthand: gamesettingdb.get('latestsetting')['lefthand'],
+        Slot.righthand: gamesettingdb.get('latestsetting')['righthand'],
+        Slot.top: gamesettingdb.get('latestsetting')['top'],
+        Slot.pants: gamesettingdb.get('latestsetting')['pants'],
+        Slot.shoe: gamesettingdb.get('latestsetting')['shoe'],
+      };
+    } else {
+      return {
+        Slot.head: null,
+        Slot.lefthand: null,
+        Slot.righthand: null,
+        Slot.top: null,
+        Slot.pants: null,
+        Slot.shoe: null,
+      };
+    }
   }
 
   static Character? GetLatestCharacter() {
-    return gamesettingdb.get('latestsetting')['character'];
+    return gamesettingdb.get('latestsetting')?['character'];
   }
 
   static List<Character> GetCharacterList() {
@@ -47,14 +63,14 @@ class Repository {
   }
 
   static void SaveSetting({
-    Map<Slot, Item?>? gear,
+    required Map<Slot, Item?> gear,
     Character? character,
   }) {
     gamesettingdb.put('latestsetting', {
       'character': character,
-      'head': gear![Slot.head],
-      'lefthand': gear[Slot.lefthand],
+      'head': gear[Slot.head],
       'righthand': gear[Slot.righthand],
+      'lefthand': gear[Slot.lefthand],
       'top': gear[Slot.top],
       'pants': gear[Slot.pants],
       'shoe': gear[Slot.shoe],

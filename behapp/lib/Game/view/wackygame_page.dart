@@ -32,7 +32,7 @@ class WackyGamePage extends StatelessWidget {
             BlocProvider<CharacterlistBloc>(
               create: (context) => CharacterlistBloc(),
               lazy: false,
-            )
+            ),
           ],
           child: Builder(builder: (context) {
             return WackyGamePage();

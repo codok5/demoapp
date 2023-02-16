@@ -42,7 +42,7 @@ class CharacterListView extends StatelessWidget {
                             )),
                         width: 30.w,
                         child: Image.asset(
-                            'assets/images/${character.name}.png')));
+                            'assets/images/${character.name}_idle.png')));
               },
             ),
           ),

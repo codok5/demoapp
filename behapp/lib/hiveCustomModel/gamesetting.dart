@@ -18,20 +18,24 @@ enum Character {
   ailen,
   @HiveField(4)
   man,
+  @HiveField(5)
+  baby,
+  @HiveField(6)
+  boy,
 }
 
 @HiveType(typeId: 9)
 enum Slot {
-  @HiveField(5)
-  head,
-  @HiveField(6)
-  righthand,
   @HiveField(7)
-  lefthand,
+  head,
   @HiveField(8)
-  top,
+  righthand,
   @HiveField(9)
-  pants,
+  lefthand,
   @HiveField(10)
+  top,
+  @HiveField(11)
+  pants,
+  @HiveField(12)
   shoe,
 }

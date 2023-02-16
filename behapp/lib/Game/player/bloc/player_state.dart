@@ -5,13 +5,13 @@ class PlayerState extends Equatable {
 
   PlayerState.initial()
       : this(gear: {
-          Slot.head: Repository.GetEquipedGear()?['head'] ?? null,
-          Slot.lefthand: Repository.GetEquipedGear()?['lefthand'] ?? null,
-          Slot.righthand: Repository.GetEquipedGear()?['righthand'] ?? null,
-          Slot.top: Repository.GetEquipedGear()?['top'] ?? null,
-          Slot.pants: Repository.GetEquipedGear()?['pants'] ?? null,
-          Slot.shoe: Repository.GetEquipedGear()?['shoe'] ?? null,
-        }, character: Repository.GetLatestCharacter() ?? Character.ailen);
+          Slot.head: Repository.GetEquipedGear()[Slot.head],
+          Slot.lefthand: Repository.GetEquipedGear()[Slot.lefthand],
+          Slot.righthand: Repository.GetEquipedGear()[Slot.righthand],
+          Slot.top: Repository.GetEquipedGear()[Slot.top],
+          Slot.pants: Repository.GetEquipedGear()[Slot.pants],
+          Slot.shoe: Repository.GetEquipedGear()[Slot.shoe],
+        }, character: Repository.GetLatestCharacter() ?? Character.baby);
 
   final Map<Slot, Item?> gear;
   final Character character;

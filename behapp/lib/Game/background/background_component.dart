@@ -4,7 +4,7 @@ import 'package:behapp/Game/wackygame.dart';
 import 'package:flame/components.dart';
 
 class BackGround extends SpriteComponent with HasGameRef<WackyGame> {
-  BackGround() : super(priority: 1, size: Vector2(1000, 1000));
+  BackGround() : super(priority: 1, size: Vector2(2400, 2400));
   @override
   FutureOr<void> onLoad() async {
     anchor = Anchor.center;

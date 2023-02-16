@@ -24,6 +24,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   }
 
   void _CharacterSelected(CharacterSelected event, emit) {
+    print('character change to ${event.character}');
     emit(state.copyWith(character: event.character));
   }
 }

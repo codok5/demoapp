@@ -39,14 +39,14 @@ class _GameSettingPageState extends State<GameSettingPage> {
               child: Text('hat')),
           ElevatedButton(
               onPressed: () {
-                Repository.AddCharacter(Character.ailen);
+                Repository.AddCharacter(Character.baby);
               },
-              child: Text('add ailen to charcaterlist')),
+              child: Text('add baby to charcaterlist')),
           ElevatedButton(
               onPressed: () {
-                Repository.AddCharacter(Character.man);
+                Repository.AddCharacter(Character.boy);
               },
-              child: Text('add man to characterlist')),
+              child: Text('add boy to characterlist')),
           ElevatedButton(
               onPressed: () {
                 print(gamesettingdb.get('characterlist'));

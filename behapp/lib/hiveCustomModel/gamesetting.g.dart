@@ -61,6 +61,10 @@ class CharacterAdapter extends TypeAdapter<Character> {
         return Character.ailen;
       case 4:
         return Character.man;
+      case 5:
+        return Character.baby;
+      case 6:
+        return Character.boy;
       default:
         return Character.ailen;
     }
@@ -74,6 +78,12 @@ class CharacterAdapter extends TypeAdapter<Character> {
         break;
       case Character.man:
         writer.writeByte(4);
+        break;
+      case Character.baby:
+        writer.writeByte(5);
+        break;
+      case Character.boy:
+        writer.writeByte(6);
         break;
     }
   }
@@ -96,17 +106,17 @@ class SlotAdapter extends TypeAdapter<Slot> {
   @override
   Slot read(BinaryReader reader) {
     switch (reader.readByte()) {
-      case 5:
-        return Slot.head;
-      case 6:
-        return Slot.righthand;
       case 7:
-        return Slot.lefthand;
+        return Slot.head;
       case 8:
-        return Slot.top;
+        return Slot.righthand;
       case 9:
-        return Slot.pants;
+        return Slot.lefthand;
       case 10:
+        return Slot.top;
+      case 11:
+        return Slot.pants;
+      case 12:
         return Slot.shoe;
       default:
         return Slot.head;
@@ -117,22 +127,22 @@ class SlotAdapter extends TypeAdapter<Slot> {
   void write(BinaryWriter writer, Slot obj) {
     switch (obj) {
       case Slot.head:
-        writer.writeByte(5);
-        break;
-      case Slot.righthand:
-        writer.writeByte(6);
-        break;
-      case Slot.lefthand:
         writer.writeByte(7);
         break;
-      case Slot.top:
+      case Slot.righthand:
         writer.writeByte(8);
         break;
-      case Slot.pants:
+      case Slot.lefthand:
         writer.writeByte(9);
         break;
-      case Slot.shoe:
+      case Slot.top:
         writer.writeByte(10);
+        break;
+      case Slot.pants:
+        writer.writeByte(11);
+        break;
+      case Slot.shoe:
+        writer.writeByte(12);
         break;
     }
   }

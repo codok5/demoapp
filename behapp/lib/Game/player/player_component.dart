@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:behapp/Game/repository/repository.dart';
+import 'package:behapp/Game/model/direction.dart';
 import 'package:flame/components.dart';
+import 'package:flame/sprite.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 
 import 'package:behapp/Game/model/Item.dart';
@@ -9,11 +10,18 @@ import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/wackygame.dart';
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 
-class Player extends PositionComponent with HasGameRef<WackyGame> {
-  late final PositionComponent runAnimation;
-  late final PositionComponent idleAnimation;
-
-  Player() : super(size: Vector2(60, 100), priority: 3);
+class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
+  late SpriteAnimationComponent runAnimation;
+  late SpriteAnimationComponent runforwardAnimation;
+  late SpriteAnimationComponent runbackAnimation;
+  late SpriteAnimationComponent runrightAnimation;
+  late SpriteAnimationComponent runleftAnimation;
+  late SpriteAnimationComponent standingAnimation;
+  late SpriteSheet spriteSheet;
+  bool changed = false;
+  Direction direction = Direction.idle;
+  Character character = Character.baby;
+  Player() : super(size: Vector2(100, 150), priority: 3);
 
   @override
   FutureOr<void> onLoad() async {
@@ -21,9 +29,13 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
 
     anchor = Anchor.center;
 
-    add(PlayerCharacter(
-        character: Repository.GetLatestCharacter() ?? Character.ailen));
+    spriteSheet = SpriteSheet(
+        image: await gameRef.images.load('${character.name}.png'),
+        srcSize: Vector2(32, 32));
 
+    animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+
+    print('업로드');
     await add(
       FlameBlocListener<PlayerBloc, PlayerState>(
           listenWhen: (previousState, newState) =>
@@ -51,16 +63,15 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
   }
 
   void _onNewCharacterState(PlayerState state) async {
-    for (final child in children.whereType<PlayerCharacter>()) {
-      child.removeFromParent();
-    }
-    final Character character = state.character;
-    add(PlayerCharacter(character: character));
+    spriteSheet = SpriteSheet(
+        image: await gameRef.images.load('${state.character.name}.png'),
+        srcSize: Vector2(32, 32));
+    changed = true;
   }
 
   @override
   void update(double dt) {
-    position.add(getdirection(gameRef.joystick.delta) * 100 * dt);
+    move();
     super.update(dt);
   }
 
@@ -81,20 +92,42 @@ class Player extends PositionComponent with HasGameRef<WackyGame> {
       }
     }
   }
-}
 
-class PlayerCharacter extends SpriteComponent with HasGameRef<WackyGame> {
-  final Character character;
-  PlayerCharacter({
-    required this.character,
-  });
-  @override
-  FutureOr<void> onLoad() async {
-    await super.onLoad();
-    sprite = await gameRef.loadSprite('${character.name}.png');
-    anchor = Anchor.center;
-    position = Vector2(80, 100);
-    size = Vector2(60, 100);
+  void move() {
+    if (getdirection(gameRef.joystick.delta) == Vector2(1, 0)) {
+      if (direction != Direction.right) {
+        animation = spriteSheet.createAnimation(row: 2, stepTime: 0.2, to: 4);
+      }
+      direction = Direction.right;
+      position.add(Vector2(5, 0));
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(-1, 0)) {
+      if (direction != Direction.left) {
+        animation = spriteSheet.createAnimation(row: 3, stepTime: 0.2, to: 4);
+      }
+      direction = Direction.left;
+      position.add(Vector2(-5, 0));
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 1)) {
+      if (direction != Direction.front) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 4);
+      }
+      direction = Direction.front;
+      position.add(Vector2(0, 5));
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, -1)) {
+      if (direction != Direction.back) {
+        animation = spriteSheet.createAnimation(row: 1, stepTime: 0.2, to: 4);
+      }
+      direction = Direction.back;
+      position.add(Vector2(0, -5));
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 0)) {
+      if (direction != Direction.idle) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+      }
+      if (changed == true) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+        changed = false;
+      }
+      direction = Direction.idle;
+    }
   }
 }
 
@@ -115,12 +148,12 @@ class PlayerGear extends SpriteComponent with HasGameRef<WackyGame> {
       case Slot.head:
         anchor = Anchor.bottomCenter;
         size = Vector2(60, 40);
-        position = Vector2(80, 60);
+        position = Vector2(50, 25);
         break;
       case Slot.righthand:
         anchor = Anchor.bottomCenter;
         size = Vector2(20, 50);
-        position = Vector2(65, 130);
+        position = Vector2(30, 100);
         break;
       case Slot.lefthand:
         anchor = Anchor.bottomCenter;
