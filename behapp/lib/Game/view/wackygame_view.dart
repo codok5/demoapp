@@ -24,7 +24,7 @@ class WackyGameView extends StatelessWidget {
       },
       child: Scaffold(
           appBar: AppBar(
-            toolbarHeight: 35.h,
+            toolbarHeight: 48.h,
             backgroundColor: Colors.black,
             leading: Row(
               children: [
@@ -69,7 +69,7 @@ class WackyGameView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   child: InventoryView(),
                 ),
-              )
+              ),
             ],
           )),
     );

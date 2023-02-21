@@ -1,4 +1,5 @@
 import 'package:behapp/Game/model/Item.dart';
+
 import 'package:behapp/Game/repository/repository.dart';
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:bloc/bloc.dart';
@@ -11,6 +12,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   PlayerBloc() : super(PlayerState.initial()) {
     on<CharacterSelected>(_CharacterSelected);
     on<ItemSelected>(_ItemSelected);
+
   }
 
   void _ItemSelected(ItemSelected event, emit) {
@@ -26,4 +28,5 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   void _CharacterSelected(CharacterSelected event, emit) {
     emit(state.copyWith(character: event.character));
   }
+
 }

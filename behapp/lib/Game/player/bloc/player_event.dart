@@ -27,3 +27,5 @@ class CharacterSelected extends PlayerEvent {
   @override
   List<Object> get props => [character];
 }
+
+

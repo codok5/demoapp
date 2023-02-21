@@ -7,11 +7,13 @@ import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/player/player_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flutter/material.dart';
 
-class WackyGame extends FlameGame with HasCollisionDetection, HasDraggables {
+class WackyGame extends FlameGame
+    with HasCollisionDetection, HasDraggables, HasTappables {
   WackyGame({
     required this.playerBloc,
     required this.inventoryBloc,
@@ -24,6 +26,7 @@ class WackyGame extends FlameGame with HasCollisionDetection, HasDraggables {
 
   late JoystickComponent joystick;
   late final Player player;
+  late final BackGround backGround;
 
   @override
   FutureOr<void> onLoad() async {
@@ -35,7 +38,7 @@ class WackyGame extends FlameGame with HasCollisionDetection, HasDraggables {
       background: CircleComponent(radius: 50, paint: backgroundPaint),
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
-    camera.viewport = FixedResolutionViewport(Vector2(size.x, size.y));
+
     await add(
       FlameMultiBlocProvider(providers: [
         FlameBlocProvider<PlayerBloc, PlayerState>.value(value: playerBloc),
@@ -44,11 +47,27 @@ class WackyGame extends FlameGame with HasCollisionDetection, HasDraggables {
         FlameBlocProvider<BackgroundBloc, BackgroundState>.value(
             value: backgroundBloc),
       ], children: [
-        BackGround(),
-        player = Player(),
+        backGround = BackGround(),
+        player = Player()..position = Vector2(500, 500),
       ]),
     );
+    
+    final pickbutton = HudButtonComponent(
+      margin: EdgeInsets.fromLTRB(700, 300, 50, 50),
+      button: SpriteComponent(
+        sprite: Sprite(
+          await images.load('pick_rabbit.png'),
+        ),
+        size: Vector2(30, 30),
+      ),
+      onPressed: () {
+        player.pick();
+      },
+    );
+
     add(joystick);
-    camera.followComponent(player);
+    add(pickbutton);
+    camera.followVector2(player.position,
+        worldBounds: Rect.fromLTRB(0, 0, 1440, 1440));
   }
 }

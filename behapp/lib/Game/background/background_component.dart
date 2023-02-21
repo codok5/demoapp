@@ -1,18 +1,14 @@
 import 'dart:async';
 
-import 'package:behapp/Game/wackygame.dart';
 import 'package:flame/components.dart';
+import 'package:flame_tiled/flame_tiled.dart';
 
-class BackGround extends SpriteComponent with HasGameRef<WackyGame> {
-  BackGround() : super(priority: 1, size: Vector2(2400, 2400));
+class BackGround extends PositionComponent {
+  BackGround() : super(size: Vector2(1440, 1440));
   @override
   FutureOr<void> onLoad() async {
-    anchor = Anchor.center;
     await super.onLoad();
-    position = gameRef.size / 2;
-    sprite = await gameRef.loadSprite(
-      'map1.png',
-    );
+    final world = await TiledComponent.load('world.tmx', Vector2(16, 16));
+    add(world..size = Vector2(1440, 1440));
   }
 }
-

@@ -58,26 +58,21 @@ class CharacterAdapter extends TypeAdapter<Character> {
   Character read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 3:
-        return Character.ailen;
-      case 4:
-        return Character.man;
+        return Character.rabbit;
       case 5:
         return Character.baby;
       case 6:
         return Character.boy;
       default:
-        return Character.ailen;
+        return Character.rabbit;
     }
   }
 
   @override
   void write(BinaryWriter writer, Character obj) {
     switch (obj) {
-      case Character.ailen:
+      case Character.rabbit:
         writer.writeByte(3);
-        break;
-      case Character.man:
-        writer.writeByte(4);
         break;
       case Character.baby:
         writer.writeByte(5);

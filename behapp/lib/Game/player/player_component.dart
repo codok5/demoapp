@@ -13,29 +13,55 @@ import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
-  late SpriteAnimationComponent runAnimation;
-  late SpriteAnimationComponent runforwardAnimation;
-  late SpriteAnimationComponent runbackAnimation;
-  late SpriteAnimationComponent runrightAnimation;
-  late SpriteAnimationComponent runleftAnimation;
-  late SpriteAnimationComponent standingAnimation;
   late SpriteSheet spriteSheet;
+  late SpriteSheet actionspriteSheet;
+  late SpriteAnimation runforwardAnimation =
+      spriteSheet.createAnimation(row: 0, stepTime: 0.2, from: 2, to: 4);
+  late SpriteAnimation runbackAnimation =
+      spriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 2, to: 4);
+  late SpriteAnimation runrightAnimation =
+      spriteSheet.createAnimation(row: 3, stepTime: 0.2, from: 2, to: 4);
+  late SpriteAnimation runleftAnimation =
+      spriteSheet.createAnimation(row: 2, stepTime: 0.2, from: 2, to: 4);
+  late SpriteAnimation idleforwardAnimation =
+      spriteSheet.createAnimation(row: 0, stepTime: 0.4, from: 0, to: 2);
+  late SpriteAnimation idlebackAnimation =
+      spriteSheet.createAnimation(row: 1, stepTime: 0.4, from: 0, to: 2);
+  late SpriteAnimation idlerightAnimation =
+      spriteSheet.createAnimation(row: 3, stepTime: 0.4, from: 0, to: 2);
+  late SpriteAnimation idleleftAnimation =
+      spriteSheet.createAnimation(row: 2, stepTime: 0.4, from: 0, to: 2);
+  late SpriteAnimation pickforwardAnimation =
+      actionspriteSheet.createAnimation(row: 0, stepTime: 0.2, from: 0, to: 2);
+  late SpriteAnimation pickrightAnimation =
+      actionspriteSheet.createAnimation(row: 3, stepTime: 0.2, from: 0, to: 2);
+  late SpriteAnimation pickleftAnimation =
+      actionspriteSheet.createAnimation(row: 2, stepTime: 0.2, from: 0, to: 2);
+  late SpriteAnimation pickbackAnimation =
+      actionspriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 0, to: 2);
+  bool picked = false;
   bool changed = false;
   Direction direction = Direction.idle;
+  late final mapsize;
+
   Character character = Repository.GetLatestCharacter() ?? Character.baby;
-  Player() : super(size: Vector2(70.w, 110.h), priority: 3);
+  Player() : super(size: Vector2(48, 48), priority: 3);
 
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-
+    mapsize = gameRef.backGround.size;
     anchor = Anchor.center;
 
     spriteSheet = SpriteSheet(
         image: await gameRef.images.load('${character.name}.png'),
         srcSize: Vector2(32, 32));
 
-    animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+    actionspriteSheet = SpriteSheet(
+        image: await gameRef.images.load('rabbit_action.png'),
+        srcSize: Vector2(48, 48));
+
+    animation = idleforwardAnimation;
     for (final entry in Repository.GetEquipedGear().entries) {
       final item = entry.value;
       if (item != null) {
@@ -73,66 +99,160 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
     spriteSheet = SpriteSheet(
         image: await gameRef.images.load('${state.character.name}.png'),
         srcSize: Vector2(32, 32));
+    updateAnimation(spriteSheet);
     changed = true;
+  }
+
+  void updateAnimation(SpriteSheet spriteSheet) {
+    runforwardAnimation =
+        spriteSheet.createAnimation(row: 0, stepTime: 0.2, from: 2, to: 4);
+    runbackAnimation =
+        spriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 2, to: 4);
+    runrightAnimation =
+        spriteSheet.createAnimation(row: 3, stepTime: 0.2, from: 2, to: 4);
+    runleftAnimation =
+        spriteSheet.createAnimation(row: 2, stepTime: 0.2, from: 2, to: 4);
+    idleforwardAnimation =
+        spriteSheet.createAnimation(row: 0, stepTime: 0.4, from: 0, to: 2);
+    idlebackAnimation =
+        spriteSheet.createAnimation(row: 1, stepTime: 0.4, from: 0, to: 2);
+    idlerightAnimation =
+        spriteSheet.createAnimation(row: 3, stepTime: 0.4, from: 0, to: 2);
+    idleleftAnimation =
+        spriteSheet.createAnimation(row: 2, stepTime: 0.4, from: 0, to: 2);
   }
 
   @override
   void update(double dt) {
     move();
+    action();
+
     super.update(dt);
   }
 
-  Vector2 getdirection(Vector2 delta) {
-    if (delta == Vector2(0, 0)) {
-      return Vector2(0, 0);
-    } else if (delta[0].abs() > delta[1].abs()) {
-      if (delta[0] > 0) {
-        return Vector2(1, 0);
-      } else {
-        return Vector2(-1, 0);
+  void action() {
+    if (picked == true) {
+      size = Vector2(128, 128);
+      if (animation == idleforwardAnimation) {
+        animation = pickforwardAnimation;
+        Future.delayed(Duration(milliseconds: 700), () {
+          picked = false;
+          animation = idleforwardAnimation;
+        });
+      } else if (animation == idlerightAnimation) {
+        animation = pickrightAnimation;
+        Future.delayed(Duration(milliseconds: 700), () {
+          picked = false;
+          animation = idlerightAnimation;
+        });
+      } else if (animation == idleleftAnimation) {
+        animation = pickleftAnimation;
+        Future.delayed(Duration(milliseconds: 700), () {
+          picked = false;
+          animation = idleleftAnimation;
+        });
+      } else if (animation == idlebackAnimation) {
+        animation = pickbackAnimation;
+        Future.delayed(Duration(milliseconds: 700), () {
+          picked = false;
+          animation = idlebackAnimation;
+        });
       }
+    } else {}
+  }
+
+  void pick() {
+    picked = true;
+  }
+
+  Direction getdirection(JoystickComponent joystickComponent) {
+    if (joystickComponent.relativeDelta[0] > 0 &&
+        joystickComponent.relativeDelta[0].abs() >
+            joystickComponent.relativeDelta[1].abs()) {
+      return Direction.right;
+    } else if (joystickComponent.relativeDelta[0] < 0 &&
+        joystickComponent.relativeDelta[0].abs() >
+            joystickComponent.relativeDelta[1].abs()) {
+      return Direction.left;
+    } else if (joystickComponent.relativeDelta[1] > 0) {
+      return Direction.front;
+    } else if (joystickComponent.relativeDelta[1] < 0) {
+      return Direction.back;
     } else {
-      if (delta[1] > 0) {
-        return Vector2(0, 1);
-      } else {
-        return Vector2(0, -1);
-      }
+      return Direction.idle;
+    }
+  }
+
+  bool canmoveRight() {
+    if (position[0] + size[0] > mapsize[0]) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool canmoveLeft() {
+    if (position[0] - size[0] < 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool canmoveFront() {
+    if (position[1] + size[1] > mapsize[1]) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool canmoveBack() {
+    if (position[1] - size[1] < 0) {
+      return false;
+    } else {
+      return true;
     }
   }
 
   void move() {
-    if (getdirection(gameRef.joystick.delta) == Vector2(1, 0)) {
+    if (picked == false) {
+      size = Vector2(48, 48);
+    }
+    Direction playerdirection = getdirection(gameRef.joystick);
+    if (playerdirection == Direction.right && canmoveRight()) {
       if (direction != Direction.right) {
-        animation = spriteSheet.createAnimation(row: 2, stepTime: 0.2, to: 4);
+        animation = runrightAnimation;
       }
       direction = Direction.right;
-
-      position.add(Vector2(5, 0));
-    } else if (getdirection(gameRef.joystick.delta) == Vector2(-1, 0)) {
+      position.add(Vector2(gameRef.joystick.relativeDelta[0] * 3, 0));
+    } else if (playerdirection == Direction.left && canmoveLeft()) {
       if (direction != Direction.left) {
-        animation = spriteSheet.createAnimation(row: 3, stepTime: 0.2, to: 4);
+        animation = runleftAnimation;
       }
       direction = Direction.left;
-      position.add(Vector2(-5, 0));
-    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 1)) {
+      position.add(Vector2(gameRef.joystick.relativeDelta[0] * 3, 0));
+    } else if (playerdirection == Direction.front && canmoveFront()) {
       if (direction != Direction.front) {
-        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 4);
+        animation = runforwardAnimation;
       }
       direction = Direction.front;
-      position.add(Vector2(0, 5));
-    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, -1)) {
+      position.add(Vector2(0, gameRef.joystick.relativeDelta[1] * 3));
+    } else if (playerdirection == Direction.back && canmoveBack()) {
       if (direction != Direction.back) {
-        animation = spriteSheet.createAnimation(row: 1, stepTime: 0.2, to: 4);
+        animation = runbackAnimation;
       }
       direction = Direction.back;
-      position.add(Vector2(0, -5));
-    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 0)) {
-      if (direction != Direction.idle) {
-        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
-      }
-      if (changed == true) {
-        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
-        changed = false;
+      position.add(Vector2(0, gameRef.joystick.relativeDelta[1] * 3));
+    } else if (playerdirection == Direction.idle) {
+      if (direction == Direction.back) {
+        animation = idlebackAnimation;
+      } else if (direction == Direction.right) {
+        animation = idlerightAnimation;
+      } else if (direction == Direction.left) {
+        animation = idleleftAnimation;
+      } else if (direction == Direction.front) {
+        animation = idleforwardAnimation;
       }
       direction = Direction.idle;
     }
@@ -155,17 +275,17 @@ class PlayerGear extends SpriteAnimationComponent with HasGameRef<WackyGame> {
     spriteSheet = SpriteSheet(
         image: await gameRef.images.load('${item.name}_${slot.name}.png'),
         srcSize: Vector2(50, 50));
-    animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+    animation = spriteSheet.createAnimation(row: 0, stepTime: 0.3, to: 1);
     switch (slot) {
       case Slot.head:
         anchor = Anchor.bottomCenter;
-        size = Vector2(70, 70);
-        position = Vector2(35, 40);
+        size = Vector2(25.w, 45.h);
+        position = Vector2(15.w, 16.h);
         break;
       case Slot.righthand:
         anchor = Anchor.bottomCenter;
-        size = Vector2(70, 90);
-        position = Vector2(30, 100);
+        size = Vector2(70.w, 90.h);
+        position = Vector2(30.w, 100.h);
         break;
       case Slot.lefthand:
         anchor = Anchor.bottomCenter;
@@ -237,7 +357,7 @@ class PlayerGear extends SpriteAnimationComponent with HasGameRef<WackyGame> {
       direction = Direction.back;
     } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 0)) {
       if (direction != Direction.idle) {
-        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.3, to: 1);
       }
 
       direction = Direction.idle;

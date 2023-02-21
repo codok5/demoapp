@@ -15,9 +15,7 @@ enum Item {
 @HiveType(typeId: 8)
 enum Character {
   @HiveField(3)
-  ailen,
-  @HiveField(4)
-  man,
+  rabbit,
   @HiveField(5)
   baby,
   @HiveField(6)
