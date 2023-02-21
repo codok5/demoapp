@@ -26,13 +26,14 @@ class GoalObjectAdapter extends TypeAdapter<GoalObject> {
       completed: fields[6] as bool,
       id_todo_list: (fields[7] as List).cast<dynamic>(),
       goalType: fields[8] as GoalType,
+      rewardcoin: fields[9] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, GoalObject obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id_goal)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class GoalObjectAdapter extends TypeAdapter<GoalObject> {
       ..writeByte(7)
       ..write(obj.id_todo_list)
       ..writeByte(8)
-      ..write(obj.goalType);
+      ..write(obj.goalType)
+      ..writeByte(9)
+      ..write(obj.rewardcoin);
   }
 
   @override

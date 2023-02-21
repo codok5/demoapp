@@ -1,7 +1,13 @@
+import 'dart:math';
+
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 
-
-
+extension GetRandomItem on Item {
+  static Item generateRandomItem() {
+    List<Item> list = List.from(Item.values);
+    return list[Random().nextInt(list.length)];
+  }
+}
 
 extension ItemSlot on Item {
   Slot get slots {

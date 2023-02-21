@@ -11,24 +11,31 @@ class Repository {
     return iteminventory;
   }
 
-  static void AddItem(Item item) {
-    List<Item> newiteminventory = [
-      ...gamesettingdb.get('iteminventory') ?? [],
-      item
-    ];
-    newiteminventory = newiteminventory.toSet().toList();
-    gamesettingdb.put('iteminventory', newiteminventory);
+  static Future<void> AddItem(Item item) async {
+    try {
+      List<Item> newiteminventory = [
+        ...gamesettingdb.get('iteminventory') ?? [],
+        item
+      ];
+      newiteminventory = newiteminventory.toSet().toList();
+      gamesettingdb.put('iteminventory', newiteminventory);
+    } catch (e) {
+      throw Error();
+    }
   }
 
   static Map<Slot, Item?> GetEquipedGear() {
-    if (gamesettingdb.get('latestsetting') != null) {
+    Map<String, dynamic>? latestsetting = {
+      ...gamesettingdb.get('latestsetting') ?? {}
+    };
+    if (latestsetting != {}) {
       return {
-        Slot.head: gamesettingdb.get('latestsetting')['head'],
-        Slot.lefthand: gamesettingdb.get('latestsetting')['lefthand'],
-        Slot.righthand: gamesettingdb.get('latestsetting')['righthand'],
-        Slot.top: gamesettingdb.get('latestsetting')['top'],
-        Slot.pants: gamesettingdb.get('latestsetting')['pants'],
-        Slot.shoe: gamesettingdb.get('latestsetting')['shoe'],
+        Slot.head: latestsetting['head'],
+        Slot.lefthand: latestsetting['lefthand'],
+        Slot.righthand: latestsetting['righthand'],
+        Slot.top: latestsetting['top'],
+        Slot.pants: latestsetting['pants'],
+        Slot.shoe: latestsetting['shoe'],
       };
     } else {
       return {
@@ -43,7 +50,9 @@ class Repository {
   }
 
   static Character? GetLatestCharacter() {
-    return gamesettingdb.get('latestsetting')?['character'];
+    Character? latestCharacter =
+        gamesettingdb.get('latestsetting')?['character'];
+    return latestCharacter;
   }
 
   static List<Character> GetCharacterList() {

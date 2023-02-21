@@ -22,13 +22,14 @@ class TodoObjectAdapter extends TypeAdapter<TodoObject> {
       name: fields[9] as String,
       todoType: fields[10] as TodoType,
       goaltime: fields[12] as int,
+      rewardcoin: fields[13] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, TodoObject obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id_goal)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class TodoObjectAdapter extends TypeAdapter<TodoObject> {
       ..writeByte(10)
       ..write(obj.todoType)
       ..writeByte(12)
-      ..write(obj.goaltime);
+      ..write(obj.goaltime)
+      ..writeByte(13)
+      ..write(obj.rewardcoin);
   }
 
   @override

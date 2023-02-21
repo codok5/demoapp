@@ -1,4 +1,5 @@
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
+import 'package:behapp/Game/model/Item.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,7 +38,8 @@ class InventoryView extends StatelessWidget {
                               color: Colors.red,
                             )),
                         width: 30.w,
-                        child: Image.asset('assets/images/${item.name}.png')));
+                        child: Image.asset(
+                            'assets/images/${item.name}_${item.slots.name}.png')));
               },
             ),
           ),

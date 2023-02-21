@@ -94,7 +94,7 @@ class _GoalsPageState extends State<GoalsPage> {
                                             'progressstatus'] ==
                                         GoalProgressStatus.inprogress
                                     ? AssetImage('assets/images/inprogress.png')
-                                    : AssetImage('assets/images/bear.gif'),
+                                    : AssetImage('assets/images/ailen.png'),
                             width: 100,
                             height: 100,
                           ),
@@ -154,76 +154,14 @@ class _GoalsPageState extends State<GoalsPage> {
                                                         builder: (BuildContext
                                                             context) {
                                                           return Dialog(
-                                                            child: Container(
-                                                              height: 300.h,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(20),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            1000),
-                                                              ),
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    '${tododata[goallist[index].id_todo_list[indext]]!.name}',
-                                                                  ),
-                                                                  Text(
-                                                                    tododata[goallist[index].id_todo_list[indext]]!.todoType ==
-                                                                            TodoType.nontimer
-                                                                        ? '단순 완료형'
-                                                                        : '타이머형',
-                                                                  ),
-                                                                  Text(tododata[goallist[index].id_todo_list[indext]]!
-                                                                              .todoType ==
-                                                                          TodoType
-                                                                              .timer
-                                                                      ? '하루 목표 시간 : ${tododata[goallist[index].id_todo_list[indext]]!.goaltime}'
-                                                                      : ''),
-                                                                  ElevatedButton(
-                                                                    onPressed:
-                                                                        (() async {
-                                                                      return showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (context) {
-                                                                          return AlertDialog(
-                                                                            title:
-                                                                                Text('삭제하시겠습니까?'),
-                                                                            actions: [
-                                                                              TextButton(
-                                                                                onPressed: () {
-                                                                                  Navigator.pop(context);
-                                                                                },
-                                                                                child: Text(
-                                                                                  '아니오',
-                                                                                ),
-                                                                              ),
-                                                                              TextButton(
-                                                                                onPressed: (() {
-                                                                                  context.read<TodoProvider>().deletetodo(goallist[index].id_todo_list[indext]);
-                                                                                  Navigator.pop(context);
-                                                                                  Navigator.pop(context);
-                                                                                }),
-                                                                                child: Text(
-                                                                                  '네',
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    }),
-                                                                    child: Text(
-                                                                      '삭제',
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                            child:
+                                                                MakeTodoWidget(
+                                                              tododata:
+                                                                  tododata,
+                                                              goallist:
+                                                                  goallist,
+                                                              index: index,
+                                                              indext: indext,
                                                             ),
                                                           );
                                                         },
@@ -267,25 +205,22 @@ class _GoalsPageState extends State<GoalsPage> {
                                         ),
                                       ),
                                       LinearPercentIndicator(
-                                        percent: context
-                                                            .watch<GoalState>()
-                                                            .goalprogressdata[goallist[index].id_goal]![
+                                        percent: progressdata[goallist[index]
+                                                            .id_goal]![
                                                         'presentprogress'] /
-                                                    context
-                                                            .watch<GoalState>()
-                                                            .goalprogressdata[goallist[index].id_goal]![
+                                                    progressdata[goallist[index]
+                                                            .id_goal]![
                                                         'totalprogress'] >
                                                 1
                                             ? 1
-                                            : context
-                                                        .watch<GoalState>()
-                                                        .goalprogressdata[goallist[index].id_goal]![
+                                            : progressdata[goallist[index]
+                                                        .id_goal]![
                                                     'presentprogress'] /
                                                 context
-                                                        .watch<GoalState>()
-                                                        .goalprogressdata[
-                                                    goallist[index]
-                                                        .id_goal]!['totalprogress'],
+                                                    .watch<GoalState>()
+                                                    .goalprogressdata[goallist[
+                                                        index]
+                                                    .id_goal]!['totalprogress'],
                                       ),
                                       Row(
                                         crossAxisAlignment:
@@ -293,59 +228,8 @@ class _GoalsPageState extends State<GoalsPage> {
                                         children: [
                                           ElevatedButton(
                                             onPressed: (() async {
-                                              return showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: Text('삭제하시겠습니까?'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          '아니오',
-                                                        ),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: (() {
-                                                          List<dynamic>
-                                                              deletekey = [
-                                                            ...goallist[index]
-                                                                .id_todo_list
-                                                          ];
-                                                          for (var id_todo
-                                                              in deletekey) {
-                                                            context
-                                                                .read<
-                                                                    TodoProvider>()
-                                                                .deletetodo(
-                                                                    id_todo);
-                                                          }
-                                                          context
-                                                              .read<
-                                                                  GoalProvider>()
-                                                              .deletegoal(
-                                                                  goallist[
-                                                                          index]
-                                                                      .id_goal);
-
-                                                          setState(() {
-                                                            goalselected[
-                                                                index] = false;
-                                                          });
-                                                          Navigator.pop(
-                                                              context);
-                                                        }),
-                                                        child: Text(
-                                                          '네',
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
+                                              return ShowRemoveDialog(
+                                                  context, goallist, index);
                                             }),
                                             child: Text(
                                               '삭제',
@@ -358,14 +242,18 @@ class _GoalsPageState extends State<GoalsPage> {
                                             },
                                             child: Text('매일의 할일 생성'),
                                           ),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                context
-                                                    .read<GoalProvider>()
-                                                    .addprogress(goallist[index]
-                                                        .id_goal);
-                                              },
-                                              child: Text('a'))
+                                          goallist[index].completed == true
+                                              ? ElevatedButton(
+                                                  onPressed: () {
+                                                    context
+                                                        .read<GoalProvider>()
+                                                        .addprogress(
+                                                            goallist[index]
+                                                                .id_goal);
+                                                  },
+                                                  child: Text('완료'),
+                                                )
+                                              : SizedBox(width: 0)
                                         ],
                                       ),
                                     ],
@@ -384,6 +272,47 @@ class _GoalsPageState extends State<GoalsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> ShowRemoveDialog(
+      BuildContext context, List<GoalObject> goallist, int index) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('삭제하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                '아니오',
+              ),
+            ),
+            TextButton(
+              onPressed: (() {
+                List<dynamic> deletekey = [...goallist[index].id_todo_list];
+                for (var id_todo in deletekey) {
+                  context.read<TodoProvider>().deletetodo(id_todo);
+                }
+                context
+                    .read<GoalProvider>()
+                    .deletegoal(goallist[index].id_goal);
+
+                setState(() {
+                  goalselected[index] = false;
+                });
+                Navigator.pop(context);
+              }),
+              child: Text(
+                '네',
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -525,6 +454,85 @@ class _GoalsPageState extends State<GoalsPage> {
           ),
         );
       },
+    );
+  }
+}
+
+class MakeTodoWidget extends StatelessWidget {
+  const MakeTodoWidget({
+    super.key,
+    required this.tododata,
+    required this.goallist,
+    required this.index,
+    required this.indext,
+  });
+
+  final Map<dynamic, TodoObject> tododata;
+  final List<GoalObject> goallist;
+  final int index;
+  final int indext;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 300.h,
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(1000),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '${tododata[goallist[index].id_todo_list[indext]]!.name}',
+          ),
+          Text(
+            tododata[goallist[index].id_todo_list[indext]]!.todoType ==
+                    TodoType.nontimer
+                ? '단순 완료형'
+                : '타이머형',
+          ),
+          Text(tododata[goallist[index].id_todo_list[indext]]!.todoType ==
+                  TodoType.timer
+              ? '하루 목표 시간 : ${tododata[goallist[index].id_todo_list[indext]]!.goaltime}'
+              : ''),
+          ElevatedButton(
+            onPressed: (() async {
+              return showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('삭제하시겠습니까?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          '아니오',
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: (() {
+                          context
+                              .read<TodoProvider>()
+                              .deletetodo(goallist[index].id_todo_list[indext]);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        }),
+                        child: Text(
+                          '네',
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            }),
+            child: Text(
+              '삭제',
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

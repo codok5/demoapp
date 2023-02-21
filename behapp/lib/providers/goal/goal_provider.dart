@@ -17,6 +17,7 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
     required GoalType goalType,
   }) {
     final String id_goal = Uuid().v1();
+    final int rewardcoin = (startday.difference(endday).inDays+1)*5;
     final GoalObject goalObject = GoalObject(
       id_goal: id_goal,
       name: name,
@@ -27,6 +28,7 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
       presentprogress: 0,
       id_todo_list: [],
       goalType: goalType,
+      rewardcoin: rewardcoin,
     );
     Map<dynamic, GoalObject> newgoaldata = {
       ...state.goaldata,
@@ -65,7 +67,7 @@ class GoalProvider extends StateNotifier<GoalState> with LocatorMixin {
   void togglegoal(String id_goal) {
     GoalObject? toggledgoal = goaldb.get(id_goal);
     toggledgoal!.completed = !toggledgoal.completed;
-    Map<dynamic, GoalObject> newgoaldata = state.goaldata;
+    Map<dynamic, GoalObject> newgoaldata = {...state.goaldata};
     newgoaldata[id_goal] = toggledgoal;
     state = state.copyWith(goaldata: newgoaldata);
     goaldb.put(id_goal, toggledgoal);

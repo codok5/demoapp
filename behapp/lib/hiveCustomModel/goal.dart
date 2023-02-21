@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
 
-
-
 part 'goal.g.dart';
 
 @HiveType(typeId: 2)
@@ -44,6 +42,9 @@ class GoalObject {
 
   @HiveField(8)
   final GoalType goalType;
+
+  @HiveField(9)
+  final int rewardcoin;
   GoalObject({
     required this.id_goal,
     required this.name,
@@ -54,7 +55,6 @@ class GoalObject {
     required this.completed,
     required this.id_todo_list,
     required this.goalType,
+    required this.rewardcoin,
   });
-
-  
 }

@@ -25,7 +25,9 @@ class TodoProvider extends StateNotifier<TodoState> with LocatorMixin {
         id_todo: id_todo,
         name: name,
         todoType: todoType,
-        goaltime: goaltime);
+        goaltime: goaltime,
+        rewardcoin: goaltime*2,
+        );
     final Map<dynamic, TodoObject> tododata = {
       ...state.tododata,
       id_todo: todoObject

@@ -26,12 +26,16 @@ class TodoObject {
 
   @HiveField(12)
   final int goaltime;
+
+  @HiveField(13)
+  final int rewardcoin;
   TodoObject({
     required this.id_goal,
     required this.id_todo,
     required this.name,
     required this.todoType,
     required this.goaltime,
+    required this.rewardcoin,
   });
 
   

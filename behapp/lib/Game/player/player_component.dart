@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:behapp/Game/model/direction.dart';
+import 'package:behapp/Game/repository/repository.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_bloc/flame_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:behapp/Game/model/Item.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/wackygame.dart';
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   late SpriteAnimationComponent runAnimation;
@@ -20,8 +22,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   late SpriteSheet spriteSheet;
   bool changed = false;
   Direction direction = Direction.idle;
-  Character character = Character.baby;
-  Player() : super(size: Vector2(100, 150), priority: 3);
+  Character character = Repository.GetLatestCharacter() ?? Character.baby;
+  Player() : super(size: Vector2(70.w, 110.h), priority: 3);
 
   @override
   FutureOr<void> onLoad() async {
@@ -34,8 +36,13 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
         srcSize: Vector2(32, 32));
 
     animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+    for (final entry in Repository.GetEquipedGear().entries) {
+      final item = entry.value;
+      if (item != null) {
+        add(PlayerGear(slot: item.slots, item: item));
+      } else {}
+    }
 
-    print('업로드');
     await add(
       FlameBlocListener<PlayerBloc, PlayerState>(
           listenWhen: (previousState, newState) =>
@@ -99,6 +106,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
         animation = spriteSheet.createAnimation(row: 2, stepTime: 0.2, to: 4);
       }
       direction = Direction.right;
+
       position.add(Vector2(5, 0));
     } else if (getdirection(gameRef.joystick.delta) == Vector2(-1, 0)) {
       if (direction != Direction.left) {
@@ -131,7 +139,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   }
 }
 
-class PlayerGear extends SpriteComponent with HasGameRef<WackyGame> {
+class PlayerGear extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   final Slot slot;
   final Item item;
   PlayerGear({
@@ -139,42 +147,100 @@ class PlayerGear extends SpriteComponent with HasGameRef<WackyGame> {
     required this.item,
   }) : super(priority: 4);
 
+  late SpriteSheet spriteSheet;
+  Direction direction = Direction.idle;
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-    sprite = await gameRef.loadSprite('${item.name}.png');
-
+    spriteSheet = SpriteSheet(
+        image: await gameRef.images.load('${item.name}_${slot.name}.png'),
+        srcSize: Vector2(50, 50));
+    animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
     switch (slot) {
       case Slot.head:
         anchor = Anchor.bottomCenter;
-        size = Vector2(60, 40);
-        position = Vector2(50, 25);
+        size = Vector2(70, 70);
+        position = Vector2(35, 40);
         break;
       case Slot.righthand:
         anchor = Anchor.bottomCenter;
-        size = Vector2(20, 50);
+        size = Vector2(70, 90);
         position = Vector2(30, 100);
         break;
       case Slot.lefthand:
         anchor = Anchor.bottomCenter;
-        size = Vector2(20, 50);
+        size = Vector2(70, 70);
         position = Vector2(0, 0);
         break;
       case Slot.top:
         anchor = Anchor.bottomCenter;
-        size = Vector2(80, 30);
+        size = Vector2(50, 50);
         position = Vector2(0, 0);
         break;
       case Slot.pants:
         anchor = Anchor.bottomCenter;
-        size = Vector2(80, 30);
+        size = Vector2(50, 50);
         position = Vector2(0, 0);
         break;
       case Slot.shoe:
         anchor = Anchor.bottomCenter;
-        size = Vector2(80, 30);
+        size = Vector2(50, 50);
         position = Vector2(0, 0);
         break;
+    }
+  }
+
+  Vector2 getdirection(Vector2 delta) {
+    if (delta == Vector2(0, 0)) {
+      return Vector2(0, 0);
+    } else if (delta[0].abs() > delta[1].abs()) {
+      if (delta[0] > 0) {
+        return Vector2(1, 0);
+      } else {
+        return Vector2(-1, 0);
+      }
+    } else {
+      if (delta[1] > 0) {
+        return Vector2(0, 1);
+      } else {
+        return Vector2(0, -1);
+      }
+    }
+  }
+
+  @override
+  void update(double dt) {
+    move();
+    super.update(dt);
+  }
+
+  void move() {
+    if (getdirection(gameRef.joystick.delta) == Vector2(1, 0)) {
+      if (direction != Direction.right) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 2);
+      }
+      direction = Direction.right;
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(-1, 0)) {
+      if (direction != Direction.left) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 2);
+      }
+      direction = Direction.left;
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 1)) {
+      if (direction != Direction.front) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 2);
+      }
+      direction = Direction.front;
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, -1)) {
+      if (direction != Direction.back) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 2);
+      }
+      direction = Direction.back;
+    } else if (getdirection(gameRef.joystick.delta) == Vector2(0, 0)) {
+      if (direction != Direction.idle) {
+        animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
+      }
+
+      direction = Direction.idle;
     }
   }
 }

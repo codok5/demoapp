@@ -9,7 +9,6 @@ import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
-
   @override
   State<CalendarPage> createState() => _CalendarPageState();
 }
@@ -24,6 +23,9 @@ class _CalendarPageState extends State<CalendarPage> {
         color: Colors.blueGrey.withOpacity(0.2),
         child: Column(
           children: [
+            SizedBox(
+              height: 30,
+            ),
             TableCalendar(
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {

@@ -19,19 +19,19 @@ class WackyGamePage extends StatelessWidget {
           providers: [
             BlocProvider<InventoryBloc>(
               create: (context) => InventoryBloc(),
-              lazy: false,
+              
             ),
             BlocProvider<PlayerBloc>(
               create: (context) => PlayerBloc(),
-              lazy: false,
+              
             ),
             BlocProvider<BackgroundBloc>(
               create: (context) => BackgroundBloc(),
-              lazy: false,
+              
             ),
             BlocProvider<CharacterlistBloc>(
               create: (context) => CharacterlistBloc(),
-              lazy: false,
+             
             ),
           ],
           child: Builder(builder: (context) {
@@ -45,6 +45,7 @@ class WackyGamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
+      
       return WackyGameView();
     });
   }

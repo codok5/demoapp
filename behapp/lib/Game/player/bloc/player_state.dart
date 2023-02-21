@@ -16,6 +16,8 @@ class PlayerState extends Equatable {
   final Map<Slot, Item?> gear;
   final Character character;
 
+ 
+
   bool isItemEquiped(Item item) {
     return gear.values.contains(item);
   }

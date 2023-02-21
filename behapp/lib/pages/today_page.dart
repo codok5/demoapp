@@ -4,6 +4,7 @@ import 'package:behapp/pages/diary_page.dart';
 import 'package:behapp/providers/date_progress/date_progress_provider.dart';
 import 'package:behapp/providers/todo/todo_provider.dart';
 import 'package:behapp/utils/formatter.dart';
+import 'package:behapp/widget/coin_get_widget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,6 +43,16 @@ class _TodayPageState extends State<TodayPage> {
                 child: DiaryWidget(),
               ),
               GoalWidget(),
+              ElevatedButton(
+                  onPressed: () async {
+                    return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CoinGetDialog(reward: 10);
+                      },
+                    );
+                  },
+                  child: Text('획득')),
             ],
           ),
         ),

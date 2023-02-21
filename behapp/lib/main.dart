@@ -1,4 +1,5 @@
 import 'package:behapp/firebase_options.dart';
+import 'package:behapp/hiveCustomModel/user.dart';
 import 'package:behapp/library/local_notification.dart';
 import 'pages/page.dart';
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
@@ -25,11 +26,13 @@ void main() async {
   Hive.registerAdapter(TodayTodoProgressObjectAdapter());
   Hive.registerAdapter(ItemAdapter());
   Hive.registerAdapter(CharacterAdapter());
+  Hive.registerAdapter(UserAdapter());
   await Hive.openBox<EmotionDiaryObject>('emotiondiary');
   await Hive.openBox<GoalObject>('goal');
   await Hive.openBox<TodoObject>('todo');
   await Hive.openBox<List<dynamic>>('todoprogress');
   await Hive.openBox<dynamic>('gamesetting');
+  await Hive.openBox<User>('user');
   await initializeDateFormatting();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

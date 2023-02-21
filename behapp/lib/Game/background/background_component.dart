@@ -15,3 +15,4 @@ class BackGround extends SpriteComponent with HasGameRef<WackyGame> {
     );
   }
 }
+

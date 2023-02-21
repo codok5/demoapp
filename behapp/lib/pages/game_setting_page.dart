@@ -23,18 +23,18 @@ class _GameSettingPageState extends State<GameSettingPage> {
               },
               child: Text('입장')),
           ElevatedButton(
-              onPressed: () {
-                Repository.AddItem(Item.sword1);
+              onPressed: ()  async{
+                await Repository.AddItem(Item.sword1);
               },
               child: Text('sword1')),
           ElevatedButton(
-              onPressed: () {
-                Repository.AddItem(Item.sword2);
+              onPressed: ()async {
+                await Repository.AddItem(Item.sword2);
               },
               child: Text('sword2')),
           ElevatedButton(
-              onPressed: () {
-                Repository.AddItem(Item.hat);
+              onPressed: () async {
+                await Repository.AddItem(Item.hat);
               },
               child: Text('hat')),
           ElevatedButton(
