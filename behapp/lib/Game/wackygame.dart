@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:behapp/Game/background/background_component.dart';
 import 'package:behapp/Game/background/bloc/background_bloc.dart';
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
+import 'package:behapp/Game/obstacles/obstacle.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/player/player_component.dart';
 import 'package:flame/components.dart';
@@ -10,6 +11,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_bloc/flame_bloc.dart';
+import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
 class WackyGame extends FlameGame
@@ -30,6 +32,7 @@ class WackyGame extends FlameGame
 
   @override
   FutureOr<void> onLoad() async {
+    debugMode = true;
     await super.onLoad();
     final knobPaint = BasicPalette.white.withAlpha(200).paint();
     final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
@@ -51,7 +54,7 @@ class WackyGame extends FlameGame
         player = Player()..position = Vector2(500, 500),
       ]),
     );
-    
+
     final pickbutton = HudButtonComponent(
       margin: EdgeInsets.fromLTRB(700, 300, 50, 50),
       button: SpriteComponent(
@@ -60,10 +63,18 @@ class WackyGame extends FlameGame
         ),
         size: Vector2(30, 30),
       ),
+      buttonDown: CircleComponent(),
       onPressed: () {
         player.pick();
       },
     );
+
+    final map = await TiledComponent.load('world.tmx', Vector2(16, 16));
+    final List<TiledObject> obstacles =
+        map.tileMap.getLayer<ObjectGroup>('obstacles')!.objects;
+    for (final TiledObject obstacle in obstacles) {
+      add(Obstacle(obstacle));
+    }
 
     add(joystick);
     add(pickbutton);

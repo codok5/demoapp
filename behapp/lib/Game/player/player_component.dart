@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:behapp/Game/model/direction.dart';
+import 'package:behapp/Game/obstacles/obstacle.dart';
 import 'package:behapp/Game/repository/repository.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_bloc/flame_bloc.dart';
@@ -12,7 +14,8 @@ import 'package:behapp/Game/wackygame.dart';
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
+class Player extends SpriteAnimationComponent
+    with CollisionCallbacks, HasGameRef<WackyGame> {
   late SpriteSheet spriteSheet;
   late SpriteSheet actionspriteSheet;
   late SpriteAnimation runforwardAnimation =
@@ -40,7 +43,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   late SpriteAnimation pickbackAnimation =
       actionspriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 0, to: 2);
   bool picked = false;
-  bool changed = false;
+  bool collided = false;
+  Direction collidedDirection = Direction.idle;
   Direction direction = Direction.idle;
   late final mapsize;
 
@@ -80,6 +84,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
         listenWhen: (previousState, newState) =>
             newState.character != previousState.character,
         onNewState: _onNewCharacterState));
+
+    add(RectangleHitbox());
   }
 
   void _onNewGearState(PlayerState state) {
@@ -95,12 +101,29 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
     }
   }
 
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is Obstacle) {
+      if (collided == false) {
+        collided = true;
+        collidedDirection = direction;
+      }
+    }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+    collidedDirection = Direction.idle;
+    collided = false;
+  }
+
   void _onNewCharacterState(PlayerState state) async {
     spriteSheet = SpriteSheet(
         image: await gameRef.images.load('${state.character.name}.png'),
         srcSize: Vector2(32, 32));
     updateAnimation(spriteSheet);
-    changed = true;
   }
 
   void updateAnimation(SpriteSheet spriteSheet) {
@@ -166,6 +189,7 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   }
 
   Direction getdirection(JoystickComponent joystickComponent) {
+    JoystickDirection.up;
     if (joystickComponent.relativeDelta[0] > 0 &&
         joystickComponent.relativeDelta[0].abs() >
             joystickComponent.relativeDelta[1].abs()) {
@@ -184,7 +208,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   }
 
   bool canmoveRight() {
-    if (position[0] + size[0] > mapsize[0]) {
+    if (position[0] + size[0] > mapsize[0] ||
+        (collided == true && collidedDirection == Direction.right)) {
       return false;
     } else {
       return true;
@@ -192,7 +217,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   }
 
   bool canmoveLeft() {
-    if (position[0] - size[0] < 0) {
+    if (position[0] - size[0] < 0 ||
+        (collided == true && collidedDirection == Direction.left)) {
       return false;
     } else {
       return true;
@@ -200,7 +226,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   }
 
   bool canmoveFront() {
-    if (position[1] + size[1] > mapsize[1]) {
+    if (position[1] + size[1] > mapsize[1] ||
+        (collided == true && collidedDirection == Direction.front)) {
       return false;
     } else {
       return true;
@@ -208,7 +235,8 @@ class Player extends SpriteAnimationComponent with HasGameRef<WackyGame> {
   }
 
   bool canmoveBack() {
-    if (position[1] - size[1] < 0) {
+    if (position[1] - size[1] < 0 ||
+        (collided == true && collidedDirection == Direction.back)) {
       return false;
     } else {
       return true;

@@ -18,6 +18,9 @@ class _GameSettingPageState extends State<GameSettingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 100,
+            ),
             ElevatedButton(
                 onPressed: () {
                   Navigator.push(context, WackyGamePage.route());
