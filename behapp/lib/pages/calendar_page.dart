@@ -95,28 +95,26 @@ class GoalWidgetCalendar extends StatelessWidget {
                   color: Colors.blueGrey,
                 )),
             child: todaytodolist != null && todaytodolist.length != 0
-                ? Column(
-                    children: [
-                      Expanded(
-                        child: ListView.separated(
-                            itemBuilder: (context, index) {
-                              return Text(
-                                '${tododata[todaytodolist[index].id_todo]?.name}',
-                                style: TextStyle(
-                                  fontSize: 28,
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return Divider(
-                                height: 2,
-                                color: Colors.transparent,
-                              );
-                            },
-                            itemCount: todaytodolist.length),
-                      ),
-                    ],
-                  )
+                ? ListView.separated(
+                    padding: EdgeInsets.only(top: 5),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        child: Text(
+                          '${tododata[todaytodolist[index].id_todo]?.name}',
+                          style: TextStyle(
+                            fontSize: 28,
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider(
+                        height: 2,
+                        color: Colors.transparent,
+                      );
+                    },
+                    itemCount: todaytodolist.length)
                 : Text(
                     '새로운 할일을 입력하세요',
                     style: TextStyle(

@@ -4,4 +4,8 @@ enum Direction {
   left,
   right,
   idle,
+  idlefront,
+  idleback,
+  idleright,
+  idleleft,
 }

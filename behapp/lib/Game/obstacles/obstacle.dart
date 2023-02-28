@@ -12,6 +12,14 @@ class Obstacle extends PositionComponent {
     await super.onLoad();
     position = Vector2(obstacle.x, obstacle.y);
     size = Vector2(obstacle.width, obstacle.height);
-    add(RectangleHitbox());
+    if (obstacle.isPolygon == true) {
+      List<Vector2> vertices = [];
+      for (Point point in obstacle.polygon) {
+        vertices.add(Vector2(point.x, point.y));
+      }
+      add(PolygonHitbox(vertices));
+    } else {
+      add(RectangleHitbox());
+    }
   }
 }

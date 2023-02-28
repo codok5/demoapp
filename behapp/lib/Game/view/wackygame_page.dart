@@ -2,19 +2,17 @@ import 'package:behapp/Game/background/bloc/background_bloc.dart';
 import 'package:behapp/Game/characterlist/bloc/characterlist_bloc.dart';
 
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
-import 'package:flame/flame.dart';
+import 'package:behapp/Game/plant/bloc/plant_bloc.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 
 import 'package:behapp/Game/view/wackygame_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class WackyGamePage extends StatelessWidget {
+class WackyGamePage extends StatefulWidget {
   const WackyGamePage({super.key});
-
   static Route<void> route() {
-    Flame.device.setLandscape();
-    Flame.device.fullScreen();
     return MaterialPageRoute(
       builder: (context) {
         return MultiBlocProvider(
@@ -31,6 +29,9 @@ class WackyGamePage extends StatelessWidget {
             BlocProvider<CharacterlistBloc>(
               create: (context) => CharacterlistBloc(),
             ),
+            BlocProvider<PlantBloc>(
+              create: (context) => PlantBloc(),
+            ),
           ],
           child: Builder(builder: (context) {
             return WackyGamePage();
@@ -38,6 +39,24 @@ class WackyGamePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  State<WackyGamePage> createState() => _WackyGamePageState();
+}
+
+class _WackyGamePageState extends State<WackyGamePage> {
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    super.dispose();
   }
 
   @override

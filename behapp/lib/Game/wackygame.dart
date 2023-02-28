@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:behapp/Game/background/background_component.dart';
 import 'package:behapp/Game/background/bloc/background_bloc.dart';
+import 'package:behapp/Game/door/door_sprite.dart';
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
 import 'package:behapp/Game/obstacles/obstacle.dart';
+import 'package:behapp/Game/plant/bloc/plant_bloc.dart';
+import 'package:behapp/Game/plant/plant_component.dart';
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/player/player_component.dart';
 import 'package:flame/components.dart';
@@ -16,19 +19,21 @@ import 'package:flutter/material.dart';
 
 class WackyGame extends FlameGame
     with HasCollisionDetection, HasDraggables, HasTappables {
-  WackyGame({
-    required this.playerBloc,
-    required this.inventoryBloc,
-    required this.backgroundBloc,
-  });
+  WackyGame(
+      {required this.playerBloc,
+      required this.inventoryBloc,
+      required this.backgroundBloc,
+      required this.plantBloc});
 
   final PlayerBloc playerBloc;
   final InventoryBloc inventoryBloc;
   final BackgroundBloc backgroundBloc;
+  final PlantBloc plantBloc;
 
   late JoystickComponent joystick;
   late final Player player;
   late final BackGround backGround;
+  late final PlantComponent plantComponent;
 
   @override
   FutureOr<void> onLoad() async {
@@ -42,18 +47,31 @@ class WackyGame extends FlameGame
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
 
+    final map = await TiledComponent.load('world.tmx', Vector2(16, 16));
+    final List<TiledObject> obstacles =
+        map.tileMap.getLayer<ObjectGroup>('obstacles')!.objects;
+    final List<TiledObject> plants =
+        map.tileMap.getLayer<ObjectGroup>('plant')!.objects;
     await add(
       FlameMultiBlocProvider(providers: [
-        FlameBlocProvider<PlayerBloc, PlayerState>.value(value: playerBloc),
+        FlameBlocProvider<PlayerBloc, PlayerState>.value(
+          value: playerBloc,
+        ),
         FlameBlocProvider<InventoryBloc, InventoryState>.value(
-            value: inventoryBloc),
+          value: inventoryBloc,
+        ),
         FlameBlocProvider<BackgroundBloc, BackgroundState>.value(
-            value: backgroundBloc),
+          value: backgroundBloc,
+        ),
       ], children: [
         backGround = BackGround(),
         player = Player()..position = Vector2(500, 500),
       ]),
     );
+    for (final TiledObject plant in plants) {
+      add(FlameBlocProvider<PlantBloc, PlantState>(
+          create: () => PlantBloc(), children: [PlantComponent(plant)]));
+    }
 
     final pickbutton = HudButtonComponent(
       margin: EdgeInsets.fromLTRB(700, 300, 50, 50),
@@ -69,12 +87,11 @@ class WackyGame extends FlameGame
       },
     );
 
-    final map = await TiledComponent.load('world.tmx', Vector2(16, 16));
-    final List<TiledObject> obstacles =
-        map.tileMap.getLayer<ObjectGroup>('obstacles')!.objects;
     for (final TiledObject obstacle in obstacles) {
       add(Obstacle(obstacle));
     }
+
+    add(Door());
 
     add(joystick);
     add(pickbutton);

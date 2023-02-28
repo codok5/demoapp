@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'today_todo_detail_page.dart';
 import 'package:behapp/providers/emotion_diary/emotion_diary_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class TodayPage extends StatefulWidget {
   const TodayPage({super.key});
@@ -78,7 +79,10 @@ class _GoalWidgetState extends State<GoalWidget> {
         .dateprogressdata[formatdatetoint(formatint.format(DateTime.now()))];
     final Map<dynamic, TodoObject> tododata =
         context.watch<TodoState>().tododata;
-
+    double todopercent =
+        (todaytodolist?.where((element) => element.completed == true).length ??
+                0.0) /
+            (todaytodolist?.length ?? 1);
     return Column(
       children: [
         Text('오늘의 할일'),
@@ -91,69 +95,94 @@ class _GoalWidgetState extends State<GoalWidget> {
               border: Border.all(
                 color: Colors.blueGrey,
               )),
-          child: todaytodolist != null && todaytodolist.length != 0
-              ? ListView.separated(
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () async {
-                        bool? completed = await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              child: TodayTodoWidget(
-                                goaltime:
-                                    tododata[todaytodolist[index].id_todo]!
-                                            .goaltime *
-                                        60,
-                                donetime: todaytodolist[index].done_time,
-                                id_todo: todaytodolist[index].id_todo,
-                                index: index,
+          child: Row(
+            children: [
+              Center(
+                child: CircularPercentIndicator(
+                  circularStrokeCap: CircularStrokeCap.round,
+                  radius: 98,
+                  lineWidth: 35,
+                  progressColor: Colors.amber,
+                  percent: todopercent,
+                  center: Text(
+                    '${(todopercent * 100).round()}%',
+                    style:
+                        TextStyle(fontSize: 30.sp, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              todaytodolist != null && todaytodolist.length != 0
+                  ? Expanded(
+                      child: ListView.separated(
+                          padding: EdgeInsets.only(top: 10),
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                bool? completed = await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      child: TodayTodoWidget(
+                                        todoType: tododata[
+                                                todaytodolist[index].id_todo]!
+                                            .todoType,
+                                        goaltime: tododata[todaytodolist[index]
+                                                    .id_todo]!
+                                                .goaltime *
+                                            60,
+                                        donetime:
+                                            todaytodolist[index].done_time,
+                                        id_todo: todaytodolist[index].id_todo,
+                                        index: index,
+                                      ),
+                                    );
+                                  },
+                                );
+                                if (completed == true) {
+                                  setState(() {});
+                                }
+                              },
+                              child: Consumer<DateProgressProvider>(
+                                builder: (context, value, child) {
+                                  return Container(
+                                    margin: EdgeInsets.all(
+                                      10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                      width: 2,
+                                      color: todaytodolist[index].completed
+                                          ? Colors.red
+                                          : Colors.black,
+                                    )),
+                                    child: Text(
+                                      '${tododata[todaytodolist[index].id_todo]?.name}',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 28,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             );
                           },
-                        );
-                        if (completed == true) {
-                          setState(() {});
-                        }
-                      },
-                      child: Consumer<DateProgressProvider>(
-                        builder: (context, value, child) {
-                          return Container(
-                            margin: EdgeInsets.all(
-                              10,
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                              width: 2,
-                              color: todaytodolist[index].completed
-                                  ? Colors.red
-                                  : Colors.black,
-                            )),
-                            child: Text(
-                              '${tododata[todaytodolist[index].id_todo]?.name}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 28,
-                              ),
-                            ),
-                          );
-                        },
+                          separatorBuilder: (context, index) {
+                            return Divider(
+                              height: 2,
+                              color: Colors.transparent,
+                            );
+                          },
+                          itemCount: todaytodolist.length),
+                    )
+                  : Text(
+                      '새로운 할일을 입력하세요',
+                      style: TextStyle(
+                        fontSize: 24,
                       ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      height: 2,
-                      color: Colors.transparent,
-                    );
-                  },
-                  itemCount: todaytodolist.length)
-              : Text(
-                  '새로운 할일을 입력하세요',
-                  style: TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
+                    ),
+            ],
+          ),
         ),
       ],
     );

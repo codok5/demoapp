@@ -3,6 +3,7 @@ import 'package:behapp/Game/characterlist/view/characterlist_view.dart';
 
 import 'package:behapp/Game/inventory/bloc/inventory_bloc.dart';
 import 'package:behapp/Game/inventory/view/inventory_view.dart';
+import 'package:behapp/Game/plant/bloc/plant_bloc.dart';
 
 import 'package:behapp/Game/player/bloc/player_bloc.dart';
 import 'package:behapp/Game/repository/repository.dart';
@@ -37,7 +38,8 @@ class WackyGameView extends StatelessWidget {
                     Navigator.pop(context);
                     Repository.SaveSetting(
                         gear: context.read<PlayerBloc>().state.gear,
-                        character: context.read<PlayerBloc>().state.character);
+                        character:
+                            context.read<PlayerBloc>().state.character);
                   },
                 ),
               ],
@@ -50,6 +52,7 @@ class WackyGameView extends StatelessWidget {
                   playerBloc: context.read<PlayerBloc>(),
                   inventoryBloc: context.read<InventoryBloc>(),
                   backgroundBloc: context.read<BackgroundBloc>(),
+                  plantBloc: context.read<PlantBloc>(),
                 ),
               ),
               Positioned(

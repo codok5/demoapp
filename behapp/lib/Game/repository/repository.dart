@@ -1,4 +1,5 @@
 import 'package:behapp/hiveCustomModel/hiveCustomModel.dart';
+import 'package:behapp/providers/customprovider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 Box<dynamic> gamesettingdb = Hive.box('gamesetting');
@@ -84,5 +85,10 @@ class Repository {
       'pants': gear[Slot.pants],
       'shoe': gear[Slot.shoe],
     });
+  }
+
+  static List<GoalObject> GetGoalList() {
+    final List<GoalObject> goallist = [...goaldb.values];
+    return goallist;
   }
 }

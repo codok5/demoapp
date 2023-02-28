@@ -52,6 +52,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     LocalNotification.initialize();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.initState();
   }
 
@@ -61,9 +62,6 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return MultiProvider(
       providers: [
-        // StateNotifierProvider<GameSettingProvider, GameSettingState>(
-        //   create: (context) => GameSettingProvider(),
-        // ),
         StateNotifierProvider<EmotionDiaryProvider, EmotionDiaryState>(
           create: (context) => EmotionDiaryProvider(),
         ),
@@ -95,7 +93,7 @@ class _MyAppState extends State<MyApp> {
                   ],
                 ),
             debugShowCheckedModeBanner: false,
-            home: HomePage(),
+            home: PageBuilder(),
             title: 'Flutter Demo',
             theme: ThemeData(
               fontFamily: 'HiMelody',

@@ -17,39 +17,43 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class Player extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameRef<WackyGame> {
   late SpriteSheet spriteSheet;
-  late SpriteSheet actionspriteSheet;
+
   late SpriteAnimation runforwardAnimation =
-      spriteSheet.createAnimation(row: 0, stepTime: 0.2, from: 2, to: 4);
+      spriteSheet.createAnimation(row: 4, stepTime: 0.2, to: 8);
   late SpriteAnimation runbackAnimation =
-      spriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 2, to: 4);
+      spriteSheet.createAnimation(row: 5, stepTime: 0.2, to: 8);
   late SpriteAnimation runrightAnimation =
-      spriteSheet.createAnimation(row: 3, stepTime: 0.2, from: 2, to: 4);
+      spriteSheet.createAnimation(row: 6, stepTime: 0.2, to: 8);
   late SpriteAnimation runleftAnimation =
-      spriteSheet.createAnimation(row: 2, stepTime: 0.2, from: 2, to: 4);
+      spriteSheet.createAnimation(row: 7, stepTime: 0.2, to: 8);
   late SpriteAnimation idleforwardAnimation =
-      spriteSheet.createAnimation(row: 0, stepTime: 0.4, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 8);
   late SpriteAnimation idlebackAnimation =
-      spriteSheet.createAnimation(row: 1, stepTime: 0.4, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 1, stepTime: 0.2, to: 8);
   late SpriteAnimation idlerightAnimation =
-      spriteSheet.createAnimation(row: 3, stepTime: 0.4, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 3, stepTime: 0.2, to: 8);
   late SpriteAnimation idleleftAnimation =
-      spriteSheet.createAnimation(row: 2, stepTime: 0.4, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 2, stepTime: 0.2, to: 8);
   late SpriteAnimation pickforwardAnimation =
-      actionspriteSheet.createAnimation(row: 0, stepTime: 0.2, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 12, stepTime: 0.1, to: 8);
   late SpriteAnimation pickrightAnimation =
-      actionspriteSheet.createAnimation(row: 3, stepTime: 0.2, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 15, stepTime: 0.1, to: 8);
   late SpriteAnimation pickleftAnimation =
-      actionspriteSheet.createAnimation(row: 2, stepTime: 0.2, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 14, stepTime: 0.1, to: 8);
   late SpriteAnimation pickbackAnimation =
-      actionspriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 0, to: 2);
+      spriteSheet.createAnimation(row: 13, stepTime: 0.1, to: 8);
   bool picked = false;
-  bool collided = false;
+  bool canmoveRight = true;
+  bool canmoveLeft = true;
+  bool canmoveFront = true;
+  bool canmoveBack = true;
   Direction collidedDirection = Direction.idle;
   Direction direction = Direction.idle;
+
   late final mapsize;
 
   Character character = Repository.GetLatestCharacter() ?? Character.baby;
-  Player() : super(size: Vector2(48, 48), priority: 3);
+  Player() : super(size: Vector2(96, 96), priority: 3);
 
   @override
   FutureOr<void> onLoad() async {
@@ -58,11 +62,7 @@ class Player extends SpriteAnimationComponent
     anchor = Anchor.center;
 
     spriteSheet = SpriteSheet(
-        image: await gameRef.images.load('${character.name}.png'),
-        srcSize: Vector2(32, 32));
-
-    actionspriteSheet = SpriteSheet(
-        image: await gameRef.images.load('rabbit_action.png'),
+        image: await gameRef.images.load('action_rabbit.png'),
         srcSize: Vector2(48, 48));
 
     animation = idleforwardAnimation;
@@ -85,7 +85,13 @@ class Player extends SpriteAnimationComponent
             newState.character != previousState.character,
         onNewState: _onNewCharacterState));
 
-    add(RectangleHitbox());
+    add(
+      CircleHitbox(
+        radius: 21,
+        anchor: Anchor.center,
+        position: Vector2(48, 48),
+      ),
+    );
   }
 
   void _onNewGearState(PlayerState state) {
@@ -104,10 +110,84 @@ class Player extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
+
     if (other is Obstacle) {
-      if (collided == false) {
-        collided = true;
-        collidedDirection = direction;
+      List<Vector2> interl = [];
+
+      for (Vector2 inter in intersectionPoints) {
+        inter.sub(position);
+        interl.add(inter);
+      }
+
+      if (interl.length == 2) {
+        double x1 = (interl[0].x - interl[1].x).abs();
+        double y1 = (interl[0].y - interl[1].y).abs();
+        if (x1 < y1) {
+          if (interl[0].x > 0) {
+            canmoveRight = false;
+            canmoveLeft = true;
+          } else {
+            canmoveLeft = false;
+            canmoveRight = true;
+          }
+        } else {
+          if (interl[0].y > 0) {
+            canmoveFront = false;
+            canmoveBack = true;
+          } else {
+            canmoveBack = false;
+            canmoveFront = true;
+          }
+        }
+      } else if (interl.length == 4) {
+        double x1 = (interl[0].x - interl[1].x).abs();
+        double x2 = (interl[2].x - interl[3].x).abs();
+        double y1 = (interl[0].y - interl[1].y).abs();
+        double y2 = (interl[2].y - interl[3].y).abs();
+
+        if (x1 < y1) {
+          if (interl[0].x > 0) {
+            canmoveRight = false;
+            canmoveLeft = true;
+            if (x2 > y2) {
+              if (interl[2].y > 0) {
+                canmoveFront = false;
+              } else {
+                canmoveBack = false;
+              }
+            }
+          } else {
+            canmoveLeft = false;
+            canmoveRight = true;
+            if (x2 > y2) {
+              if (interl[2].y > 0) {
+                canmoveFront = false;
+              } else {
+                canmoveBack = false;
+              }
+            }
+          }
+        } else {
+          if (interl[0].y > 0) {
+            canmoveFront = false;
+            if (x2 < y2) {
+              if (interl[2].x > 0) {
+                canmoveRight = false;
+              } else {
+                canmoveLeft = false;
+              }
+            }
+          } else {
+            canmoveBack = false;
+            if (x2 < y2) {
+              if (interl[2].x > 0) {
+                canmoveRight = false;
+              } else {
+                canmoveLeft = false;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -115,8 +195,10 @@ class Player extends SpriteAnimationComponent
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
-    collidedDirection = Direction.idle;
-    collided = false;
+    canmoveBack = true;
+    canmoveFront = true;
+    canmoveRight = true;
+    canmoveLeft = true;
   }
 
   void _onNewCharacterState(PlayerState state) async {
@@ -128,55 +210,53 @@ class Player extends SpriteAnimationComponent
 
   void updateAnimation(SpriteSheet spriteSheet) {
     runforwardAnimation =
-        spriteSheet.createAnimation(row: 0, stepTime: 0.2, from: 2, to: 4);
+        spriteSheet.createAnimation(row: 4, stepTime: 0.2, to: 8);
     runbackAnimation =
-        spriteSheet.createAnimation(row: 1, stepTime: 0.2, from: 2, to: 4);
+        spriteSheet.createAnimation(row: 5, stepTime: 0.2, to: 8);
     runrightAnimation =
-        spriteSheet.createAnimation(row: 3, stepTime: 0.2, from: 2, to: 4);
+        spriteSheet.createAnimation(row: 6, stepTime: 0.2, to: 8);
     runleftAnimation =
-        spriteSheet.createAnimation(row: 2, stepTime: 0.2, from: 2, to: 4);
+        spriteSheet.createAnimation(row: 7, stepTime: 0.2, to: 8);
     idleforwardAnimation =
-        spriteSheet.createAnimation(row: 0, stepTime: 0.4, from: 0, to: 2);
+        spriteSheet.createAnimation(row: 0, stepTime: 0.2, to: 8);
     idlebackAnimation =
-        spriteSheet.createAnimation(row: 1, stepTime: 0.4, from: 0, to: 2);
+        spriteSheet.createAnimation(row: 1, stepTime: 0.2, to: 8);
     idlerightAnimation =
-        spriteSheet.createAnimation(row: 3, stepTime: 0.4, from: 0, to: 2);
+        spriteSheet.createAnimation(row: 3, stepTime: 0.2, to: 8);
     idleleftAnimation =
-        spriteSheet.createAnimation(row: 2, stepTime: 0.4, from: 0, to: 2);
+        spriteSheet.createAnimation(row: 2, stepTime: 0.2, to: 8);
   }
 
   @override
   void update(double dt) {
     move();
     action();
-
     super.update(dt);
   }
 
   void action() {
     if (picked == true) {
-      size = Vector2(128, 128);
       if (animation == idleforwardAnimation) {
         animation = pickforwardAnimation;
-        Future.delayed(Duration(milliseconds: 700), () {
+        Future.delayed(Duration(milliseconds: 1500), () {
           picked = false;
           animation = idleforwardAnimation;
         });
       } else if (animation == idlerightAnimation) {
         animation = pickrightAnimation;
-        Future.delayed(Duration(milliseconds: 700), () {
+        Future.delayed(Duration(milliseconds: 1500), () {
           picked = false;
           animation = idlerightAnimation;
         });
       } else if (animation == idleleftAnimation) {
         animation = pickleftAnimation;
-        Future.delayed(Duration(milliseconds: 700), () {
+        Future.delayed(Duration(milliseconds: 1500), () {
           picked = false;
           animation = idleleftAnimation;
         });
       } else if (animation == idlebackAnimation) {
         animation = pickbackAnimation;
-        Future.delayed(Duration(milliseconds: 700), () {
+        Future.delayed(Duration(milliseconds: 1500), () {
           picked = false;
           animation = idlebackAnimation;
         });
@@ -189,7 +269,6 @@ class Player extends SpriteAnimationComponent
   }
 
   Direction getdirection(JoystickComponent joystickComponent) {
-    JoystickDirection.up;
     if (joystickComponent.relativeDelta[0] > 0 &&
         joystickComponent.relativeDelta[0].abs() >
             joystickComponent.relativeDelta[1].abs()) {
@@ -207,66 +286,27 @@ class Player extends SpriteAnimationComponent
     }
   }
 
-  bool canmoveRight() {
-    if (position[0] + size[0] > mapsize[0] ||
-        (collided == true && collidedDirection == Direction.right)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  bool canmoveLeft() {
-    if (position[0] - size[0] < 0 ||
-        (collided == true && collidedDirection == Direction.left)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  bool canmoveFront() {
-    if (position[1] + size[1] > mapsize[1] ||
-        (collided == true && collidedDirection == Direction.front)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  bool canmoveBack() {
-    if (position[1] - size[1] < 0 ||
-        (collided == true && collidedDirection == Direction.back)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   void move() {
-    if (picked == false) {
-      size = Vector2(48, 48);
-    }
     Direction playerdirection = getdirection(gameRef.joystick);
-    if (playerdirection == Direction.right && canmoveRight()) {
+    if (playerdirection == Direction.right && canmoveRight) {
       if (direction != Direction.right) {
         animation = runrightAnimation;
       }
       direction = Direction.right;
       position.add(Vector2(gameRef.joystick.relativeDelta[0] * 3, 0));
-    } else if (playerdirection == Direction.left && canmoveLeft()) {
+    } else if (playerdirection == Direction.left && canmoveLeft) {
       if (direction != Direction.left) {
         animation = runleftAnimation;
       }
       direction = Direction.left;
       position.add(Vector2(gameRef.joystick.relativeDelta[0] * 3, 0));
-    } else if (playerdirection == Direction.front && canmoveFront()) {
+    } else if (playerdirection == Direction.front && canmoveFront) {
       if (direction != Direction.front) {
         animation = runforwardAnimation;
       }
       direction = Direction.front;
       position.add(Vector2(0, gameRef.joystick.relativeDelta[1] * 3));
-    } else if (playerdirection == Direction.back && canmoveBack()) {
+    } else if (playerdirection == Direction.back && canmoveBack) {
       if (direction != Direction.back) {
         animation = runbackAnimation;
       }
